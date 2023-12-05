@@ -1,0 +1,97 @@
+<div class="list">
+  <div class="todo-con">
+    <!-- <org-todo-skeleton class="mb-5" *ngIf="showLoader"></org-todo-skeleton> -->
+    <ng-container *ngIf="!showLoader">
+      <div *ngIf="getFilteredTodos().length === 0">
+        <div data-test="empty-state-message" class="empty-state-message">
+          No Todos selected. Please add new todos
+        </div>
+      </div>
+      <ng-container *ngIf="getFilteredTodos().length > 0">
+        <div *ngFor="let todo of getFilteredTodos()" class="todo-li">
+          <span
+            (click)="markCompleted(todo)"
+            [class.active-check]="todo.complete"
+            class="check"
+          >
+            <img src="assets/images/icon-check.svg" alt=""
+          /></span>
+          <div>
+            <p class="todos" [class.completed]="todo.complete">
+              {{ todo.name }}
+            </p>
+          </div>
+          <button (click)="(todo)" class="edit">
+            <img src="assets/images/edit.png" alt="" />
+          </button>
+          <button
+            (click)="openDeleteQuestionConfirmationDialog(todo.id)"
+            class="close"
+          >
+            <img src="assets/images/icon-cross.svg" alt="" />
+          </button>
+          <button class="pinTodo" (click)="togglePin(todo)">
+            <i
+              class="pin-star fa-star"
+              [class.fa-regular]="!todo.pinned"
+              [class.fa-solid]="todo.pinned"
+            ></i>
+          </button>
+          <div *ngIf="todo.editing">
+            <!-- <input type="text" [(ngModel)]="todo.name" (blur)="update(todo)" /> -->
+            <input type="text" (blur)="update(todo)" />
+            <button class="edit" (click)="save(todo)">
+              <img
+                src="./../../../assets/images/save.png"
+                width="30px"
+                height="20px"
+                alt=""
+              />
+            </button>
+          </div>
+          <ng-container>
+            <div
+              *ngIf="showDeleteModal"
+              (click)="closeDeleteQuestionConfirmationDialog()"
+              class="modal-background"
+              data-test="modal-background"
+            >
+              <div class="modal-content">
+                <p class="content">Do you want to delete this question?</p>
+                <div class="buttons">
+                  <button
+                    (click)="closeDeleteQuestionConfirmationDialog()"
+                    class="cancelBtn"
+                    data-test="cancelBtn"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    (click)="deleteTodo(todo.id)"
+                    class="deleteBtn"
+                    data-test="deleteBtn"
+                  >
+                    Confirm
+                  </button>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </ng-container>
+    </ng-container>
+  </div>
+</div>
+<!-- <div class="info">
+  <p class="left">{{ todos.length }} items left</p>
+  <div class="choice">
+    <p [class.active]="filter === 'all'" (click)="setFilter('all')">All</p>
+    <p [class.active]="filter === 'active'" (click)="setFilter('active')">
+      Active
+    </p>
+    <p [class.active]="filter === 'completed'" (click)="setFilter('completed')">
+      Completed
+    </p>
+  </div>
+  <p class="clear" (click)="clearCompleted()">Clear Completed</p>
+</div> -->
