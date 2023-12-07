@@ -5,9 +5,8 @@ import { AppComponent } from './app.component';
 import { ContentComponent } from '../app/content/content.component';
 import { TodoComponent } from './todo/todo.component';
 import { TodoListComponent } from './todo-list/todo-list.component';
-import { ReactiveFormsModule } from '@angular/forms';
-import { StoreModule } from '@ngrx/store';
-import { todosReducer } from './redux/reducer';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { StoreService } from './redux/store.service';
 
 @NgModule({
   declarations: [
@@ -16,8 +15,8 @@ import { todosReducer } from './redux/reducer';
     TodoComponent,
     TodoListComponent,
   ],
-  imports: [BrowserModule, ReactiveFormsModule, StoreModule.forRoot({})],
-  providers: [],
+  imports: [BrowserModule, ReactiveFormsModule, FormsModule],
+  providers: [StoreService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

@@ -1,9 +1,8 @@
 export interface Todo {
-  id: number;
+  id: string;
   name: string;
   complete: boolean;
-  pinned?: boolean;
-  editing?: boolean;
+  editing: boolean;
 }
 
 // let todos: Todo[] = []

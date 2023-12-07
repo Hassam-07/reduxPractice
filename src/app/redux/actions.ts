@@ -5,62 +5,55 @@ export interface Action {
   payload?: { [key: string]: any };
 }
 
-// Action Creator Functions
-
-// export const INCREMENT = { type: 'INCREMENT' };
-// export const DECREMENT = { type: 'DECREMENT' };
-// export const RESET = { type: 'RESET' };
-
-// export const addTodo = { type: '[Todo] Add Todo' };
-// export const deleteTodo = { type: '[Todo] Delete Todo' };
-// export const updateTodo = { type: '[Todo] Update Todo' };
-
-// export const togglePin = { type: '[Todo] Toggle Pin' };
-// export const markAsComplete = { type: '[Todo] Mark as Complete' };
-// export const clearCompleted = { type: '[Todo] Clear Completed' };
-
-export enum TodosActionTypes {
-  AddTodo = '[Todo] Add Todo',
-  DeleteTodo = '[Todo] Delete Todo',
-  UpdateTodo = '[Todo] Update Todo',
-  TogglePin = '[Todo] Toggle Pin',
-  MarkAsComplete = '[Todo] Mark as Complete',
-  ClearCompleted = '[Todo] Clear Completed',
+export interface Action {
+  type: string;
+  payload?: { [key: string]: any };
 }
 
-export class AddTodo implements Action {
-  readonly type = TodosActionTypes.AddTodo;
-  constructor(public payload: { todo: Todo }) {}
-}
+export const ADD_TODO = (todo: string): Action => ({
+  type: 'ADD_TODO',
+  payload: { todo },
+});
 
-export class DeleteTodo implements Action {
-  readonly type = TodosActionTypes.DeleteTodo;
-  constructor(public payload: { id: number }) {}
-}
+export const DELETE_TODO = (id: string): Action => ({
+  type: 'DELETE_TODO',
+  payload: { id },
+});
 
-export class UpdateTodo implements Action {
-  readonly type = TodosActionTypes.UpdateTodo;
-  constructor(public payload: { id: number; todo: Todo }) {}
-}
+export const UPDATE_TODO = (id: string): Action => ({
+  type: 'UPDATE_TODO',
+  payload: { id },
+});
+export const EDIT_TODO = (id: string, todo: string): Action => ({
+  type: 'EDIT_TODO',
+  payload: { id, todo },
+});
+export const CLEAR_COMPLETED_TODO = (Todo: string): Action => ({
+  type: 'CLEAR_COMPLETED_TODO',
+  payload: { Todo },
+});
 
-export class TogglePin implements Action {
-  readonly type = TodosActionTypes.TogglePin;
-  constructor(public payload: { id: number }) {}
-}
+// export const ADD_TODO = 'ADD_TODO';
+// export const DELETE_TODO = 'DELETE_TODO';
+// export const UPDATE_TODO = 'UPDATE_TODO';
 
-export class MarkAsComplete implements Action {
-  readonly type = TodosActionTypes.MarkAsComplete;
-  constructor(public payload: { id: number; complete: boolean }) {}
-}
+// export function addTodos(todo: Todo) {
+//   return {
+//     type: ADD_TODO,
+//     payload: todo,
+//   };
+// }
 
-export class ClearCompleted implements Action {
-  readonly type = TodosActionTypes.ClearCompleted;
-}
+// export function deleteTodos(todoId: number) {
+//   return {
+//     type: DELETE_TODO,
+//     payload: todoId,
+//   };
+// }
 
-export type TodosActionsUnion =
-  | AddTodo
-  | DeleteTodo
-  | UpdateTodo
-  | TogglePin
-  | MarkAsComplete
-  | ClearCompleted;
+// export function updateTodos(todo: Todo) {
+//   return {
+//     type: UPDATE_TODO,
+//     payload: todo,
+//   };
+// }

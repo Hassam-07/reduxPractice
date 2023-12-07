@@ -7,6 +7,7 @@ import {
   Output,
 } from '@angular/core';
 import { Todo } from '../models/Todo';
+import { StoreService } from '../redux/store.service';
 
 @Component({
   selector: 'app-todo-list',
@@ -14,22 +15,23 @@ import { Todo } from '../models/Todo';
   styleUrls: ['./todo-list.component.scss'],
 })
 export class TodoListComponent implements OnInit, OnChanges {
-  @Input() todos!: Todo[];
+  @Input() todos!: Todo[] | null;
   @Input() showDeleteModal!: boolean;
   @Input() selectedTodo: Todo | null = null;
-  @Output() deleteTodoItem = new EventEmitter<number>();
+  @Output() deleteTodoItem = new EventEmitter();
   @Output() editTodoItem = new EventEmitter();
   @Output() pinTodoItem = new EventEmitter();
-  @Output() markAsComplete = new EventEmitter<Todo>();
+  @Output() markAsComplete = new EventEmitter();
   @Output() clearcompletedItems = new EventEmitter<any>();
-  todoIdToBeDeleted!: number | undefined;
+  todoIdToBeDeleted!: string | undefined;
   @Input() errorMessage = '';
 
   @Input() showLoader = true;
   pinnedTodos: Todo[] = [];
   unpinnedTodos: Todo[] = [];
+  editedText: string = '';
   filter: 'all' | 'active' | 'completed' = 'all';
-  constructor() {}
+  constructor(private store: StoreService) {}
 
   // ngOnInit(): void {
   //   this.fetchTodos();
@@ -37,71 +39,54 @@ export class TodoListComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.showLoader = true;
   }
+
   ngOnChanges() {
-    // if ((this.todos && this.todos.length > 0) || this.todos.length === 0) {
-    //   this.showLoader = false;
-    // }
+    if ((this.todos && this.todos.length > 0) || this.todos?.length === 0) {
+      this.showLoader = false;
+    }
   }
 
-  trackByTodoId(index: number, todo: Todo): number {
-    return todo.id;
-  }
-  openDeleteQuestionConfirmationDialog(todoId: number) {
+  openDeleteQuestionConfirmationDialog(todoId: string) {
     this.todoIdToBeDeleted = todoId;
     this.showDeleteModal = true;
+    console.log(todoId);
   }
 
-  startEditing(todo: Todo) {
-    todo.editing = true;
-  }
+  // startEditing(todo: Todo) {
+  //   todo.editing = true;
+  // }
 
   closeDeleteQuestionConfirmationDialog() {
     this.todoIdToBeDeleted = undefined;
     this.showDeleteModal = false;
   }
-  deleteTodo(todoId: number | undefined) {
-    this.deleteTodoItem.emit(todoId);
+  deleteTodo() {
+    this.deleteTodoItem.emit(this.todoIdToBeDeleted);
+    this.todoIdToBeDeleted = undefined;
+    this.showDeleteModal = false;
   }
   togglePin(todo: Todo) {
     this.pinTodoItem.emit(todo);
   }
 
-  markCompleted(todo: Todo) {
+  markCompleted(todo: string) {
     this.markAsComplete.emit(todo);
   }
-  editTodo(todo: any) {
+  editTodo(todo: Todo) {
+    this.editedText = todo.name; // Initialize editedText with the current todo name
     todo.editing = true;
   }
+
   save(todo: Todo) {
+    todo.name = this.editedText; // Update the todo name with the edited text
     todo.editing = false;
   }
+
   update(todo: Todo) {
     todo.editing = false;
-    this.editTodoItem.emit(todo);
+    this.editTodoItem.emit({ id: todo.id, text: todo.name });
   }
-
   clearCompleted() {
     this.clearcompletedItems.emit();
-  }
-
-  getFilteredTodos(): Todo[] {
-    if (this.filter === 'active') {
-      return this.todos.filter((todo) => !todo.complete);
-    } else if (this.filter === 'completed') {
-      return this.todos.filter((todo) => todo.complete);
-    } else {
-      return this.todos;
-    }
-  }
-
-  setFilter(filter: 'all' | 'active' | 'completed'): void {
-    this.filter = filter;
-    if (filter === 'all') {
-      this.filter = 'all';
-    } else if (filter === 'active') {
-      this.filter = 'active';
-    } else if (filter === 'completed') {
-      this.filter = 'completed';
-    }
   }
 }

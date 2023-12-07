@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { Todo } from '../models/Todo';
+import { StoreService } from '../redux/store.service';
 
 @Component({
   selector: 'app-todo',
@@ -14,11 +15,8 @@ export class TodoComponent implements OnInit {
     name: ['', Validators.required],
   });
   todos: Todo[] = [];
-  data: any;
-  isLoading = false;
-  filter: 'all' | 'active' | 'completed' = 'all';
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private store: StoreService) {}
 
   ngOnInit(): void {
     this.todoForm = this.fb.group({
@@ -28,7 +26,7 @@ export class TodoComponent implements OnInit {
 
   addTodo() {
     if (this.todoForm.valid) {
-      const newTodo = this.todoForm.value;
+      const newTodo = this.todoForm.value.name;
       this.todoForm.reset();
       this.addTodoItem.emit(newTodo);
     }

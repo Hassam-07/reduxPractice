@@ -2,9 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ContentComponent } from './content/content.component';
 import { Observable, catchError, startWith } from 'rxjs';
 import { Todo } from './models/Todo';
-import { Store } from '@ngrx/store';
-import { AddTodo, DeleteTodo } from './redux/actions';
-import { TodosState } from './redux/reducer';
+import { ADD_TODO, UPDATE_TODO, DELETE_TODO, EDIT_TODO, CLEAR_COMPLETED_TODO } from './redux/actions';
+import { StoreService } from './redux/store.service';
 
 @Component({
   selector: 'app-root',
@@ -15,50 +14,33 @@ export class AppComponent implements OnInit {
   showDeleteModal = false;
   showLoader = true;
   selectedTodo: Todo | null = null;
-  allTodos: Todo[] = [
-    {
-      id: 1,
-      name: 'hassam',
-      complete: false,
-      pinned: false,
-      editing: false,
-    },
-    {
-      id: 2,
-      name: 'qayyum',
-      complete: false,
-      pinned: false,
-      editing: false,
-    },
-    {
-      id: 3,
-      name: 'jj',
-      complete: false,
-      pinned: false,
-      editing: false,
-    },
-  ];
 
-  constructor(private store: Store<TodosState>) {}
+  get allTodos() {
+    return this.store.select('todos');
+  }
+  constructor(private store: StoreService) {}
 
-  ngOnInit(): void {
-    this.store
-      .select((state) => state.todos)
-      .subscribe((todos) => {
-        this.allTodos = todos;
-      });
+  ngOnInit(): void {}
+
+  addTodo(newTodo: any) {
+    console.log('parent', newTodo);
+    this.store.dispatch(ADD_TODO(newTodo));
   }
 
-  addTodo(newTodo: Todo) {
-    this.store.dispatch(new AddTodo({ todo: newTodo }));
-    console.log(newTodo);
+  deleteTodo(todoId: string): void {
+    this.store.dispatch(DELETE_TODO(todoId));
+    this.showDeleteModal = false;
   }
-
-  deleteTodo(todoId: number) {
-    this.store.dispatch(new DeleteTodo({ id: todoId }));
+  markCompleted(todoId: string): void {
+    this.store.dispatch(UPDATE_TODO(todoId));
+    console.log(todoId);
   }
-
-  clearCompleted(todoId: number) {
-    this.store.dispatch(new DeleteTodo({ id: todoId }));
+  handleUpdatedTodo(editInfo: { id: string; text: string }) {
+    this.store.dispatch(EDIT_TODO(editInfo.id, editInfo.text));
+    console.log(editInfo.text);
+  }
+  clearCompleted(todoId: string): void {
+    this.store.dispatch(CLEAR_COMPLETED_TODO(todoId));
+    console.log(todoId);
   }
 }

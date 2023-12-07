@@ -11,7 +11,9 @@
         [todos]="allTodos"
         [showDeleteModal]="showDeleteModal"
         (deleteTodoItem)="deleteTodo($event)"
-        [selectedTodo]="selectedTodo"
+        (editTodoItem)="handleUpdatedTodo($event)"
+        (markAsComplete)="markCompleted($event)"
+        (clearcompletedItems)="clearCompleted($event)"
       ></app-todo-list>
     </div>
   </div>
