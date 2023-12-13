@@ -1,7 +1,7 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { Component } from '@angular/core';
 // import { DECREMENT, INCREMENT, RESET } from '../redux/actions';
-import { StoreService } from '../redux/store.service';
+// import { StoreService } from '../redux/store.service';
 
 @Component({
   selector: 'app-content',

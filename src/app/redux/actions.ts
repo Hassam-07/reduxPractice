@@ -1,59 +1,64 @@
+// export interface Action {
+//   type: string;
+//   payload?: { [key: string]: any };
+// }
+
+// export interface Action {
+//   type: string;
+//   payload?: { [key: string]: any };
+// }
+
+// export const ADD_TODO = (todo: string): Action => ({
+//   type: 'ADD_TODO',
+//   payload: { todo },
+// });
+
+// export const DELETE_TODO = (id: string): Action => ({
+//   type: 'DELETE_TODO',
+//   payload: { id },
+// });
+
+// export const UPDATE_TODO = (id: string): Action => ({
+//   type: 'UPDATE_TODO',
+//   payload: { id },
+// });
+// export const EDIT_TODO = (id: string, todo: string): Action => ({
+//   type: 'EDIT_TODO',
+//   payload: { id, todo },
+// });
+// export const CLEAR_COMPLETED_TODO = (Todo: string): Action => ({
+//   type: 'CLEAR_COMPLETED_TODO',
+//   payload: { Todo },
+// });
+import { createAction, props } from '@ngrx/store';
 import { Todo } from '../models/Todo';
 
-export interface Action {
-  type: string;
-  payload?: { [key: string]: any };
-}
+export const ADD_TODO = createAction(
+  '[Todo] Add Todo',
+  props<{ todo: string }>()
+);
 
-export interface Action {
-  type: string;
-  payload?: { [key: string]: any };
-}
+export const DELETE_TODO = createAction(
+  '[Todo] Delete Todo',
+  props<{ id: string }>()
+);
 
-export const ADD_TODO = (todo: string): Action => ({
-  type: 'ADD_TODO',
-  payload: { todo },
-});
+export const UPDATE_TODO = createAction(
+  '[Todo] Update Todo',
+  props<{ id: string }>()
+);
 
-export const DELETE_TODO = (id: string): Action => ({
-  type: 'DELETE_TODO',
-  payload: { id },
-});
+export const EDIT_TODO = createAction(
+  '[Todo] Edit Todo',
+  props<{ id: string; todo: string }>()
+);
 
-export const UPDATE_TODO = (id: string): Action => ({
-  type: 'UPDATE_TODO',
-  payload: { id },
-});
-export const EDIT_TODO = (id: string, todo: string): Action => ({
-  type: 'EDIT_TODO',
-  payload: { id, todo },
-});
-export const CLEAR_COMPLETED_TODO = (Todo: string): Action => ({
-  type: 'CLEAR_COMPLETED_TODO',
-  payload: { Todo },
-});
+export const CLEAR_COMPLETED_TODO = createAction(
+  '[Todo] Clear Completed Todo',
+  props<{ id: string }>()
+);
 
-// export const ADD_TODO = 'ADD_TODO';
-// export const DELETE_TODO = 'DELETE_TODO';
-// export const UPDATE_TODO = 'UPDATE_TODO';
-
-// export function addTodos(todo: Todo) {
-//   return {
-//     type: ADD_TODO,
-//     payload: todo,
-//   };
-// }
-
-// export function deleteTodos(todoId: number) {
-//   return {
-//     type: DELETE_TODO,
-//     payload: todoId,
-//   };
-// }
-
-// export function updateTodos(todo: Todo) {
-//   return {
-//     type: UPDATE_TODO,
-//     payload: todo,
-//   };
-// }
+export const SET_FILTER = createAction(
+  '[Todo] Set Filter',
+  props<{ filter: 'all' | 'active' | 'completed' }>()
+);

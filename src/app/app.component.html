@@ -8,7 +8,9 @@
     <div class="todo">
       <app-todo (addTodoItem)="addTodo($event)"></app-todo>
       <app-todo-list
-        [todos]="allTodos"
+        [todos]="allTodos$ | async"
+        [activeFilter]="activeTab$ | async"
+        [incompleteTodos]="incompleteTodosLength$ | async"
         [showDeleteModal]="showDeleteModal"
         (deleteTodoItem)="deleteTodo($event)"
         (editTodoItem)="handleUpdatedTodo($event)"

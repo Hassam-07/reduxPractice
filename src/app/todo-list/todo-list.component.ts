@@ -7,7 +7,9 @@ import {
   Output,
 } from '@angular/core';
 import { Todo } from '../models/Todo';
-import { StoreService } from '../redux/store.service';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs/internal/Observable';
+import { SET_FILTER } from '../redux/actions';
 
 @Component({
   selector: 'app-todo-list',
@@ -16,6 +18,7 @@ import { StoreService } from '../redux/store.service';
 })
 export class TodoListComponent implements OnInit, OnChanges {
   @Input() todos!: Todo[] | null;
+  @Input() incompleteTodos!: number | null;
   @Input() showDeleteModal!: boolean;
   @Input() selectedTodo: Todo | null = null;
   @Output() deleteTodoItem = new EventEmitter();
@@ -25,25 +28,21 @@ export class TodoListComponent implements OnInit, OnChanges {
   @Output() clearcompletedItems = new EventEmitter<any>();
   todoIdToBeDeleted!: string | undefined;
   @Input() errorMessage = '';
-
+  @Input() activeFilter!: string | null;
   @Input() showLoader = true;
   pinnedTodos: Todo[] = [];
   unpinnedTodos: Todo[] = [];
   editedText: string = '';
-  filter: 'all' | 'active' | 'completed' = 'all';
-  constructor(private store: StoreService) {}
+  constructor(private store: Store) {}
 
-  // ngOnInit(): void {
-  //   this.fetchTodos();
-  // }
   ngOnInit(): void {
     this.showLoader = true;
   }
 
   ngOnChanges() {
-    if ((this.todos && this.todos.length > 0) || this.todos?.length === 0) {
-      this.showLoader = false;
-    }
+    // if ((this.todos && this.todos.length > 0) || this.todos?.length === 0) {
+    //   this.showLoader = false;
+    // }
   }
 
   openDeleteQuestionConfirmationDialog(todoId: string) {
@@ -52,9 +51,9 @@ export class TodoListComponent implements OnInit, OnChanges {
     console.log(todoId);
   }
 
-  // startEditing(todo: Todo) {
-  //   todo.editing = true;
-  // }
+  startEditing(todo: Todo) {
+    todo.editing = true;
+  }
 
   closeDeleteQuestionConfirmationDialog() {
     this.todoIdToBeDeleted = undefined;
@@ -72,21 +71,28 @@ export class TodoListComponent implements OnInit, OnChanges {
   markCompleted(todo: string) {
     this.markAsComplete.emit(todo);
   }
+
   editTodo(todo: Todo) {
-    this.editedText = todo.name; // Initialize editedText with the current todo name
-    todo.editing = true;
+    this.editedText = todo.name;
+    this.editTodoItem.emit({ id: todo.id, text: todo.name });
+    // todo.editing = true;
+    console.log(todo);
   }
 
   save(todo: Todo) {
-    todo.name = this.editedText; // Update the todo name with the edited text
+    todo.name = this.editedText;
     todo.editing = false;
   }
 
   update(todo: Todo) {
     todo.editing = false;
-    this.editTodoItem.emit({ id: todo.id, text: todo.name });
   }
   clearCompleted() {
     this.clearcompletedItems.emit();
+  }
+
+  setFilter(filter: 'all' | 'active' | 'completed'): void {
+    this.activeFilter = filter;
+    this.store.dispatch(SET_FILTER({ filter }));
   }
 }

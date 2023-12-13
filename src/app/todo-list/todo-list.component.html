@@ -72,7 +72,20 @@
   </div>
 </div>
 <div class="info">
-  <p class="left">{{ todos?.length }} items left</p>
-
+  <p class="left">{{ incompleteTodos }} items left</p>
+  <div class="choice">
+    <p [class.active]="activeFilter === 'all'" (click)="setFilter('all')">
+      All
+    </p>
+    <p [class.active]="activeFilter === 'active'" (click)="setFilter('active')">
+      Active
+    </p>
+    <p
+      [class.active]="activeFilter === 'completed'"
+      (click)="setFilter('completed')"
+    >
+      Completed
+    </p>
+  </div>
   <p class="clear" (click)="clearCompleted()">Clear Completed</p>
 </div>

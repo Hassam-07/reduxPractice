@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { Todo } from '../models/Todo';
-import { StoreService } from '../redux/store.service';
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'app-todo',
@@ -16,7 +16,7 @@ export class TodoComponent implements OnInit {
   });
   todos: Todo[] = [];
 
-  constructor(private fb: FormBuilder, private store: StoreService) {}
+  constructor(private fb: FormBuilder, private store: Store) {}
 
   ngOnInit(): void {
     this.todoForm = this.fb.group({
