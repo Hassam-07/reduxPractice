@@ -30,12 +30,14 @@
 //   type: 'CLEAR_COMPLETED_TODO',
 //   payload: { Todo },
 // });
+
 import { createAction, props } from '@ngrx/store';
 import { Todo } from '../models/Todo';
+import { TodosState } from './reducer';
 
 export const ADD_TODO = createAction(
   '[Todo] Add Todo',
-  props<{ todo: string }>()
+  props<{ todo: Todo }>()
 );
 
 export const DELETE_TODO = createAction(
@@ -61,4 +63,10 @@ export const CLEAR_COMPLETED_TODO = createAction(
 export const SET_FILTER = createAction(
   '[Todo] Set Filter',
   props<{ filter: 'all' | 'active' | 'completed' }>()
+);
+
+export const enterTodosPage = createAction('[Todo] Enter ');
+export const setTodo = createAction(
+  '[Todo] setTodo',
+  props<{ todo: Todo[] }>()
 );

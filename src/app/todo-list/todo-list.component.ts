@@ -9,7 +9,7 @@ import {
 import { Todo } from '../models/Todo';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/internal/Observable';
-import { SET_FILTER } from '../redux/actions';
+import { SET_FILTER } from '../redux/todo.actions';
 
 @Component({
   selector: 'app-todo-list',

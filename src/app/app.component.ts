@@ -9,7 +9,8 @@ import {
   EDIT_TODO,
   SET_FILTER,
   CLEAR_COMPLETED_TODO,
-} from './redux/actions';
+  enterTodosPage,
+} from './redux/todo.actions';
 import { Store } from '@ngrx/store';
 import { selectAll } from './redux/reducer';
 import {
@@ -27,20 +28,22 @@ export class AppComponent implements OnInit {
   showDeleteModal = false;
   showLoader = true;
   selectedTodo: Todo | null = null;
-  allTodos$: Observable<Todo[]>;
+  allTodos$!: Observable<Todo[]>;
   activeFilter: 'all' | 'active' | 'completed' = 'all';
-  incompleteTodosLength$: Observable<number>;
-  activeTab$: Observable<string>;
+  incompleteTodosLength$!: Observable<number>;
+  activeTab$!: Observable<string>;
 
-  constructor(private store: Store) {
-    this.allTodos$ = store.select(selectFilteredTodos);
-    this.activeTab$ = store.select(currentTodoTab);
+  constructor(private store: Store) {}
+
+  ngOnInit(): void {
+    this.allTodos$ = this.store.select(selectFilteredTodos);
+    this.activeTab$ = this.store.select(currentTodoTab);
     this.incompleteTodosLength$ = this.store.select(incompleteTodosLength);
+
+    this.store.dispatch(enterTodosPage());
   }
 
-  ngOnInit(): void {}
-
-  addTodo(newTodo: string) {
+  addTodo(newTodo: Todo) {
     console.log('parent', newTodo);
     this.store.dispatch(ADD_TODO({ todo: newTodo }));
   }

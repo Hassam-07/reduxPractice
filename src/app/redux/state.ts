@@ -6,16 +6,16 @@ import {
   MetaReducer,
   StoreModule,
 } from '@ngrx/store';
-import * as fromBooks from './reducer';
+import * as fromTodo from './reducer';
 
 export const FEATURE_KEY = 'todos';
 
 export interface State {
-  todos: fromBooks.TodosState;
+  todos: fromTodo.TodosState;
 }
 
 export const reducers: ActionReducerMap<State> = {
-  todos: fromBooks.todoReducer,
+  todos: fromTodo.todoReducer,
 };
 
 export const metaReducers: MetaReducer<State>[] = [];
@@ -29,7 +29,7 @@ export const metaReducers: MetaReducer<State>[] = [];
 export class SharedStateTodosModule {}
 
 export const selectSharedTodosState =
-  createFeatureSelector<fromBooks.TodosState>('todos');
+  createFeatureSelector<fromTodo.TodosState>('todos');
 
 export const selectAllTodos = createSelector(
   selectSharedTodosState,

@@ -106,7 +106,7 @@
 // // };
 
 import { createReducer, on, createSelector } from '@ngrx/store';
-import * as TodoActions from './actions';
+import * as TodoActions from './todo.actions';
 import { Todo } from '../models/Todo';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -116,11 +116,7 @@ export interface TodosState {
 }
 
 export const initialState: TodosState = {
-  todos: [
-    { id: uuidv4(), name: 'Hassam', complete: true, editing: false },
-    { id: uuidv4(), name: 'Qayyum', complete: false, editing: false },
-    { id: uuidv4(), name: 'Hope', complete: false, editing: false },
-  ],
+  todos: [],
   filter: 'all',
 };
 
@@ -129,7 +125,7 @@ export const todoReducer = createReducer(
   on(TodoActions.ADD_TODO, (state, { todo }) => {
     const newTodo: Todo = {
       id: uuidv4(), // Use a proper ID logic
-      name: todo,
+      name: todo.name,
       complete: false,
       editing: false,
     };
@@ -161,6 +157,9 @@ export const todoReducer = createReducer(
   }),
   on(TodoActions.SET_FILTER, (state, { filter }) => {
     return { ...state, filter };
+  }),
+  on(TodoActions.setTodo, (state, { todo }) => {
+    return { ...state, todos: [...state.todos, ...todo] };
   })
 );
 
