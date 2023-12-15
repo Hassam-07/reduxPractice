@@ -40,7 +40,7 @@
   }
   &.paused {
     .pause-icon {
-      display: none;
+      //   display: none;
     }
   }
   &:not(.paused) {
@@ -123,10 +123,12 @@
         }
 
         .mute-btn {
-          .volume-high-icon,
-          .volume-low-icon,
-          .volume-muted-icon {
+          .volume-muted-icon,
+          .volume-low-icon {
             display: none;
+          }
+          .volume-high-icon {
+            display: block;
           }
         }
       }
@@ -224,7 +226,16 @@
           border-radius: 50%;
           transition: transform 150ms ease-in-out;
           aspect-ratio: 1 / 1;
-          transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .timeline-progress {
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          right: calc(100% - var(--progress-position) * 100%);
+          background-color: red;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
       }
       &:hover {
@@ -234,6 +245,10 @@
             display: block;
           }
         }
+      }
+    }
+    &:hover {
+      .timeline {
         .thumb-indicator {
           --scale: 1;
         }
