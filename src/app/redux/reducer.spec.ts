@@ -88,7 +88,7 @@ describe('reducerTodo', () => {
     };
 
     const updatedTodo = {
-      id: '1',
+      id: 1,
       name: 'Updated Todo 1',
       complete: false,
       editing: false,

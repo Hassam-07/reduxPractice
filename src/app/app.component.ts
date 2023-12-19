@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ContentComponent } from './content/content.component';
+
 import { Observable, catchError, startWith } from 'rxjs';
 import { Todo } from './models/Todo';
 import {
@@ -56,11 +56,7 @@ export class AppComponent implements OnInit {
     this.store.dispatch(UPDATE_TODO({ id: todoId }));
     console.log(todoId);
   }
-<<<<<<< Updated upstream
-  handleUpdatedTodo(editInfo: { id: string; text: string }) {
-=======
   handleUpdatedTodo(editInfo: { id: number; text: string }) {
->>>>>>> Stashed changes
     this.store.dispatch(EDIT_TODO({ id: editInfo.id, todo: editInfo.text }));
     console.log(editInfo.text);
   }

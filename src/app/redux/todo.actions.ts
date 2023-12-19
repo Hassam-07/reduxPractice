@@ -52,11 +52,7 @@ export const UPDATE_TODO = createAction(
 
 export const EDIT_TODO = createAction(
   '[Todo] Edit Todo',
-<<<<<<< Updated upstream
-  props<{ id: string; todo: string }>()
-=======
   props<{ id: number; todo: string }>()
->>>>>>> Stashed changes
 );
 
 export const CLEAR_COMPLETED_TODO = createAction(
