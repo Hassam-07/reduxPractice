@@ -26,7 +26,7 @@ export class TodoListComponent implements OnInit, OnChanges {
   @Output() pinTodoItem = new EventEmitter();
   @Output() markAsComplete = new EventEmitter();
   @Output() clearcompletedItems = new EventEmitter<any>();
-  todoIdToBeDeleted!: string | undefined;
+  todoIdToBeDeleted!: number | undefined;
   @Input() errorMessage = '';
   @Input() activeFilter!: string | null;
   @Input() showLoader = true;
@@ -45,7 +45,7 @@ export class TodoListComponent implements OnInit, OnChanges {
     // }
   }
 
-  openDeleteQuestionConfirmationDialog(todoId: string) {
+  openDeleteQuestionConfirmationDialog(todoId: number) {
     this.todoIdToBeDeleted = todoId;
     this.showDeleteModal = true;
     console.log(todoId);
@@ -68,7 +68,7 @@ export class TodoListComponent implements OnInit, OnChanges {
     this.pinTodoItem.emit(todo);
   }
 
-  markCompleted(todo: string) {
+  markCompleted(todo: number) {
     this.markAsComplete.emit(todo);
   }
 

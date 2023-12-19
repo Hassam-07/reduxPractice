@@ -48,19 +48,23 @@ export class AppComponent implements OnInit {
     this.store.dispatch(ADD_TODO({ todo: newTodo }));
   }
 
-  deleteTodo(todoId: string): void {
+  deleteTodo(todoId: number): void {
     this.store.dispatch(DELETE_TODO({ id: todoId }));
     this.showDeleteModal = false;
   }
-  markCompleted(todoId: string): void {
+  markCompleted(todoId: number): void {
     this.store.dispatch(UPDATE_TODO({ id: todoId }));
     console.log(todoId);
   }
+<<<<<<< Updated upstream
   handleUpdatedTodo(editInfo: { id: string; text: string }) {
+=======
+  handleUpdatedTodo(editInfo: { id: number; text: string }) {
+>>>>>>> Stashed changes
     this.store.dispatch(EDIT_TODO({ id: editInfo.id, todo: editInfo.text }));
     console.log(editInfo.text);
   }
-  clearCompleted(todoId: string): void {
+  clearCompleted(todoId: number): void {
     this.store.dispatch(CLEAR_COMPLETED_TODO({ id: todoId }));
     console.log(todoId);
   }

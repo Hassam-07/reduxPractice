@@ -42,22 +42,26 @@ export const ADD_TODO = createAction(
 
 export const DELETE_TODO = createAction(
   '[Todo] Delete Todo',
-  props<{ id: string }>()
+  props<{ id: number }>()
 );
 
 export const UPDATE_TODO = createAction(
   '[Todo] Update Todo',
-  props<{ id: string }>()
+  props<{ id: number }>()
 );
 
 export const EDIT_TODO = createAction(
   '[Todo] Edit Todo',
+<<<<<<< Updated upstream
   props<{ id: string; todo: string }>()
+=======
+  props<{ id: number; todo: string }>()
+>>>>>>> Stashed changes
 );
 
 export const CLEAR_COMPLETED_TODO = createAction(
   '[Todo] Clear Completed Todo',
-  props<{ id: string }>()
+  props<{ id: number }>()
 );
 
 export const SET_FILTER = createAction(
@@ -70,3 +74,6 @@ export const setTodo = createAction(
   '[Todo] setTodo',
   props<{ todo: Todo[] }>()
 );
+export function LOCAL_STORAGE_UPDATE(arg0: { todos: Todo[] }) {
+  throw new Error('Function not implemented.');
+}

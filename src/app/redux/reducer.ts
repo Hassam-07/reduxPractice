@@ -124,7 +124,7 @@ export const todoReducer = createReducer(
   initialState,
   on(TodoActions.ADD_TODO, (state, { todo }) => {
     const newTodo: Todo = {
-      id: uuidv4(), // Use a proper ID logic
+      id: state.todos.length + 1, // Use a proper ID logic
       name: todo.name,
       complete: false,
       editing: false,
