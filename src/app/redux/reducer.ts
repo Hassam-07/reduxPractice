@@ -125,7 +125,7 @@ export const todoReducer = createReducer(
   on(TodoActions.ADD_TODO, (state, { todo }) => {
     const newTodo: Todo = {
       id: state.todos.length + 1, // Use a proper ID logic
-      name: todo.name,
+      name: todo,
       complete: false,
       editing: false,
     };

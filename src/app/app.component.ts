@@ -43,7 +43,7 @@ export class AppComponent implements OnInit {
     this.store.dispatch(enterTodosPage());
   }
 
-  addTodo(newTodo: Todo) {
+  addTodo(newTodo: string) {
     console.log('parent', newTodo);
     this.store.dispatch(ADD_TODO({ todo: newTodo }));
   }

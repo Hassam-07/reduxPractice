@@ -11,12 +11,7 @@ import { Action } from 'rxjs/internal/scheduler/Action';
 describe('reducerTodo', () => {
   it('should handle "ADDTODO" action', () => {
     // Arrange
-    const todo = {
-      id: 1,
-      name: 'Test Todo',
-      complete: false,
-      editing: false,
-    };
+    const todo = 'test todo';
     const action = Actions.ADD_TODO({ todo });
 
     // Act
@@ -24,7 +19,7 @@ describe('reducerTodo', () => {
 
     // Assert
     expect(newState.todos.length).toBe(1);
-    expect(newState.todos[0]).toEqual(todo);
+    expect(newState.todos[0].name).toEqual(todo);
   });
   it('should handle DELETETODO action', () => {
     // Arrange

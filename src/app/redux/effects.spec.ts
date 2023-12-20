@@ -31,12 +31,8 @@ describe('TodoEffects', () => {
   });
 
   it('should store todos in local storage on AddTodo action', () => {
-    const todo: Todo = {
-      id: 1,
-      name: 'Todo 1',
-      complete: false,
-      editing: false,
-    };
+    const todo: string = 'Todo 1';
+
     const action = TodoActions.ADD_TODO({ todo });
     spyOnProperty(localStorage, 'setItem');
     // Spy on store.dispatch
@@ -49,7 +45,7 @@ describe('TodoEffects', () => {
 
   it('should store todos in local storage on ADDTODO action', fakeAsync(() => {
     // Arrange
-    const todo = { id: 1, name: 'Todo 1', complete: false, editing: false };
+    const todo ='Todo 1';
     const action = TodoActions.ADD_TODO({ todo });
 
     // Mock the selectAllTodos selector

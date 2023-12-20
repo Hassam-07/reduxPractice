@@ -37,7 +37,7 @@ import { TodosState } from './reducer';
 
 export const ADD_TODO = createAction(
   '[Todo] Add Todo',
-  props<{ todo: Todo }>()
+  props<{ todo: string }>()
 );
 
 export const DELETE_TODO = createAction(
