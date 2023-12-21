@@ -18,6 +18,8 @@ import {
   incompleteTodosLength,
   currentTodoTab,
 } from './redux/state';
+import { TodoActions } from './redux';
+import { TodoService } from './redux/todo.service';
 
 @Component({
   selector: 'app-root',
@@ -33,9 +35,10 @@ export class AppComponent implements OnInit {
   incompleteTodosLength$!: Observable<number>;
   activeTab$!: Observable<string>;
 
-  constructor(private store: Store) {}
+  constructor(private store: Store, private todoServices: TodoService) {}
 
   ngOnInit(): void {
+    this.store.dispatch(TodoActions.loadTodos());
     this.allTodos$ = this.store.select(selectFilteredTodos);
     this.activeTab$ = this.store.select(currentTodoTab);
     this.incompleteTodosLength$ = this.store.select(incompleteTodosLength);

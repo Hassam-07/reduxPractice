@@ -14,6 +14,7 @@ import * as fromTodo from './redux/reducer';
 import { TodoEffects } from './redux/todo.effects';
 import { TodoComponent } from './todo/todo.component';
 import { TodoListComponent } from './todo-list/todo-list.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [AppComponent, TodoComponent, TodoListComponent],
@@ -24,6 +25,7 @@ import { TodoListComponent } from './todo-list/todo-list.component';
     StoreModule.forRoot({ todos: todoReducer }),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
     EffectsModule.forRoot([TodoEffects]),
+    HttpClientModule,
   ],
   // providers: [StoreService],
   bootstrap: [AppComponent],

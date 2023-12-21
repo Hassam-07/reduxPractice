@@ -39,9 +39,17 @@ export const ADD_TODO = createAction(
   '[Todo] Add Todo',
   props<{ todo: string }>()
 );
+export const todoAdded = createAction(
+  '[Todo] added todo Success',
+  props<{ todo: string }>()
+);
 
 export const DELETE_TODO = createAction(
   '[Todo] Delete Todo',
+  props<{ id: number }>()
+);
+export const todoDeleted = createAction(
+  '[Todo] todo deleted',
   props<{ id: number }>()
 );
 
@@ -49,9 +57,17 @@ export const UPDATE_TODO = createAction(
   '[Todo] Update Todo',
   props<{ id: number }>()
 );
+export const markAsCompleted = createAction(
+  '[Todo] mark as completed',
+  props<{ id: number }>()
+);
 
 export const EDIT_TODO = createAction(
   '[Todo] Edit Todo',
+  props<{ id: number; todo: string }>()
+);
+export const todoToBeEdit = createAction(
+  '[Todo] todo to be Edited',
   props<{ id: number; todo: string }>()
 );
 
@@ -70,6 +86,12 @@ export const setTodo = createAction(
   '[Todo] setTodo',
   props<{ todo: Todo[] }>()
 );
-export function LOCAL_STORAGE_UPDATE(arg0: { todos: Todo[] }) {
-  throw new Error('Function not implemented.');
-}
+// export function LOCAL_STORAGE_UPDATE(arg0: { todos: Todo[] }) {
+//   throw new Error('Function not implemented.');
+// }
+
+export const loadTodosSuccess = createAction(
+  '[Todo] Load Todos Success',
+  props<{ todos: Todo[] }>()
+);
+export const loadTodos = createAction('[Todo] load todo ');

@@ -1,112 +1,45 @@
-// import { HttpClient, HttpHeaders } from '@angular/common/http';
-// import { Injectable } from '@angular/core';
-// import * as uuid from 'uuid';
-// import { Todo } from '../models/Todo';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import * as uuid from 'uuid';
+import { Todo } from '../models/Todo';
+import { Observable } from 'rxjs';
+import { Store } from '@ngrx/store';
 
-// const BASE_URL = 'http://localhost:3000/todos';
-// const HEADER = {
-//   headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
-// };
+const BASE_URL = 'http://localhost:3000/todos';
+const HEADER = {
+  headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+};
 
-// @Injectable({
-//   providedIn: 'root',
-// })
-// export class TodoService {
-//   constructor(private http: HttpClient) {}
+@Injectable({
+  providedIn: 'root',
+})
+export class TodoService {
+  private apiUrl = 'http://localhost:3000/todos';
 
-//   all() {
-//     return this.http.get<Todo[]>(BASE_URL);
-//   }
+  constructor(private http: HttpClient, private store: Store) {}
 
-//   load(id: string) {
-//     return this.http.get<Todo>(`${BASE_URL}/${id}`);
-//   }
+  getAllTodos(): Observable<Todo[]> {
+    return this.http.get<Todo[]>(this.apiUrl);
+  }
 
-//   create(bookProps: any) {
-//     const Todo: Todo = {
-//       id: uuid.v4(),
-//       ...bookProps,
-//     };
+  addTodo(todo: string): Observable<string> {
+    return this.http.post<string>(this.apiUrl, todo);
+  }
 
-//     return this.http.post<Todo>(`${BASE_URL}`, JSON.stringify(Todo), HEADER);
-//   }
+  editTodo(id: number, todo: string): Observable<string> {
+    return this.http.put<string>(`${this.apiUrl}/${id}`, todo);
+  }
 
-//   update(id: string, updates: Todo) {
-//     return this.http.patch<Todo>(
-//       `${BASE_URL}/${id}`,
-//       JSON.stringify(updates),
-//       HEADER
-//     );
-//   }
+  deleteTodo(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
 
-//   delete(id: string) {
-//     return this.http.delete(`${BASE_URL}/${id}`);
-//   }
-// }
-
-// import { HttpClient, HttpHeaders } from '@angular/common/http';
-// import { Injectable } from '@angular/core';
-// import * as uuid from 'uuid';
-// import { Todo } from '../models/Todo';
-
-// const BASE_URL = 'http://localhost:3000/todos';
-// const HEADER = {
-//   headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
-// };
-
-// @Injectable({
-//   providedIn: 'root',
-// })
-// export class TodoService {
-//   constructor(private http: HttpClient) {}
-
-//   private updateLocalStorage(todos: Todo[]): void {
-//     localStorage.setItem('todos', JSON.stringify(todos));
-//   }
-
-//   all() {
-//     return this.http.get<Todo[]>(BASE_URL);
-//   }
-
-//   load(id: string) {
-//     return this.http.get<Todo>(`${BASE_URL}/${id}`);
-//   }
-
-//   create(bookProps: any) {
-//     const newTodo: Todo = {
-//       id: uuid.v4(),
-//       ...bookProps,
-//     };
-
-//     // Retrieve current todos from localStorage
-//     const todos = JSON.parse(localStorage.getItem('todos') || '[]');
-
-//     // Add the new todo
-//     todos.push(newTodo);
-
-//     // Update localStorage
-//     this.updateLocalStorage(todos);
-
-//     return this.http.post<Todo>(BASE_URL, JSON.stringify(newTodo), HEADER);
-//   }
-
-//   update(id: string, updates: Todo) {
-//     return this.http.patch<Todo>(
-//       `${BASE_URL}/${id}`,
-//       JSON.stringify(updates),
-//       HEADER
-//     );
-//   }
-
-//   delete(id: string) {
-//     const todos = JSON.parse(localStorage.getItem('todos') || '[]');
-
-//     // Remove the todo with the given id
-//     const updatedTodos = todos.filter((todo: Todo) => todo.id !== id);
-
-//     // Update localStorage
-//     this.updateLocalStorage(updatedTodos);
-
-//     return this.http.delete(`${BASE_URL}/${id}`);
-//   }
-// }
+  markAsComplete(todoId: number): Observable<void> {
+    return this.http.patch<void>(`${this.apiUrl}/${todoId}`, {
+      complete: true,
+    });
+  }
+  clearCompleted(): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}?completed=true`);
+  }
+}

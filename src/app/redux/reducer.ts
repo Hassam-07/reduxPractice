@@ -160,6 +160,9 @@ export const todoReducer = createReducer(
   }),
   on(TodoActions.setTodo, (state, { todo }) => {
     return { ...state, todos: [...state.todos, ...todo] };
+  }),
+  on(TodoActions.loadTodosSuccess, (state, { todos }) => {
+    return { ...state, todos: [...todos] };
   })
 );
 
