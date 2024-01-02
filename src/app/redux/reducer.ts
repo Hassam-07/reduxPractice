@@ -113,19 +113,21 @@ import { v4 as uuidv4 } from 'uuid';
 export interface TodosState {
   todos: Todo[];
   filter: 'all' | 'active' | 'completed';
+  errorMessage: string | null;
 }
 
 export const initialState: TodosState = {
   todos: [],
   filter: 'all',
+  errorMessage: null,
 };
 
 export const todoReducer = createReducer(
   initialState,
   on(TodoActions.ADD_TODO, (state, { todo }) => {
     const newTodo: Todo = {
-      id: state.todos.length + 1, // Use a proper ID logic
-      name: todo,
+      id: uuidv4(),
+      name: todo.name,
       complete: false,
       editing: false,
     };
@@ -162,8 +164,15 @@ export const todoReducer = createReducer(
     return { ...state, todos: [...state.todos, ...todo] };
   }),
   on(TodoActions.loadTodosSuccess, (state, { todos }) => {
-    return { ...state, todos: [...todos] };
+    return { ...state, todos: [...todos], errorMessage: '' };
+  }),
+  on(TodoActions.loadTodosFail, (state, action) => {
+    return { ...state, errorMessage: action.ErrorText };
   })
+  // on(TodoActions.loadTodosFail, (state, { ErrorText }) => ({
+  //   ...state,
+  //   ErrorText,
+  // }))
 );
 
 export const selectAll = (state: TodosState) => state.todos;

@@ -35,6 +35,11 @@ export const selectAllTodos = createSelector(
   selectSharedTodosState,
   (state) => state && state.todos
 );
+export const allTodosInfo = createSelector(
+  selectSharedTodosState,
+  selectAllTodos,
+  (state) => state
+);
 
 export const incompleteTodosLength = createSelector(
   selectAllTodos,

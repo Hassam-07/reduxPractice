@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { v4 as uuidv4 } from 'uuid';
 
-import { Observable, catchError, startWith } from 'rxjs';
+import { Observable, catchError, of, startWith } from 'rxjs';
 import { Todo } from './models/Todo';
 import {
   ADD_TODO,
@@ -12,11 +13,12 @@ import {
   enterTodosPage,
 } from './redux/todo.actions';
 import { Store } from '@ngrx/store';
-import { selectAll } from './redux/reducer';
+import { TodosState, selectAll } from './redux/reducer';
 import {
   selectFilteredTodos,
   incompleteTodosLength,
   currentTodoTab,
+  allTodosInfo,
 } from './redux/state';
 import { TodoActions } from './redux';
 import { TodoService } from './redux/todo.service';
@@ -34,21 +36,51 @@ export class AppComponent implements OnInit {
   activeFilter: 'all' | 'active' | 'completed' = 'all';
   incompleteTodosLength$!: Observable<number>;
   activeTab$!: Observable<string>;
-
+  todoInfo$!: Observable<any>;
   constructor(private store: Store, private todoServices: TodoService) {}
-
+  errorMessage: string | null;
   ngOnInit(): void {
-    this.store.dispatch(TodoActions.loadTodos());
-    this.allTodos$ = this.store.select(selectFilteredTodos);
+    this.getTodos();
+    // this.store.dispatch(TodoActions.loadTodos());
+    // this.allTodos$ = this.store.select(selectFilteredTodos);
+    this.todoInfo$ = this.store.select(allTodosInfo);
     this.activeTab$ = this.store.select(currentTodoTab);
     this.incompleteTodosLength$ = this.store.select(incompleteTodosLength);
-
+    // this.errorMessage$ = this.store.pipe(select('error', 'errorMessage'));
     this.store.dispatch(enterTodosPage());
+  }
+  getTodos() {
+    this.todoServices
+      .getAllTodos()
+      .pipe(
+        catchError((error) => {
+          console.error('Error loading todos:', error);
+          this.store.dispatch(
+            TodoActions.loadTodosFail({
+              ErrorText: 'Failed to load todos. Please try again.',
+            })
+          );
+
+          return of([]);
+        })
+      )
+      .subscribe((todos) => {
+        this.store.dispatch(TodoActions.loadTodos());
+      });
   }
 
   addTodo(newTodo: string) {
     console.log('parent', newTodo);
-    this.store.dispatch(ADD_TODO({ todo: newTodo }));
+    this.store.dispatch(
+      ADD_TODO({
+        todo: {
+          id: uuidv4(),
+          name: newTodo,
+          complete: false,
+          editing: false,
+        },
+      })
+    );
   }
 
   deleteTodo(todoId: number): void {

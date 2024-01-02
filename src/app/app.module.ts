@@ -9,12 +9,14 @@ import { StoreModule } from '@ngrx/store';
 import { todoReducer } from './redux/reducer';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { EffectsModule } from '@ngrx/effects';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import * as fromTodo from './redux/reducer';
 import { TodoEffects } from './redux/todo.effects';
 import { TodoComponent } from './todo/todo.component';
 import { TodoListComponent } from './todo-list/todo-list.component';
 import { HttpClientModule } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [AppComponent, TodoComponent, TodoListComponent],
@@ -26,6 +28,8 @@ import { HttpClientModule } from '@angular/common/http';
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
     EffectsModule.forRoot([TodoEffects]),
     HttpClientModule,
+    BrowserAnimationsModule,
+    MatSnackBarModule,
   ],
   // providers: [StoreService],
   bootstrap: [AppComponent],

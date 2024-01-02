@@ -10,6 +10,8 @@ import { Todo } from '../models/Todo';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/internal/Observable';
 import { SET_FILTER } from '../redux/todo.actions';
+import { TodosState } from '../redux/reducer';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-todo-list',
@@ -17,7 +19,7 @@ import { SET_FILTER } from '../redux/todo.actions';
   styleUrls: ['./todo-list.component.scss'],
 })
 export class TodoListComponent implements OnInit, OnChanges {
-  @Input() todos!: Todo[] | null;
+  @Input() todos!: TodosState | null;
   @Input() incompleteTodos!: number | null;
   @Input() showDeleteModal!: boolean;
   @Input() selectedTodo: Todo | null = null;
@@ -33,7 +35,8 @@ export class TodoListComponent implements OnInit, OnChanges {
   pinnedTodos: Todo[] = [];
   unpinnedTodos: Todo[] = [];
   editedText: string = '';
-  constructor(private store: Store) {}
+
+  constructor(private store: Store, private snackBar: MatSnackBar) {}
 
   ngOnInit(): void {
     this.showLoader = true;

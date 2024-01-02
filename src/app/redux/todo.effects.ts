@@ -7,15 +7,18 @@ import {
   switchMap,
   concatMap,
   mergeMap,
+  catchError,
 } from 'rxjs/operators';
 import { Action, Store, select } from '@ngrx/store';
 import { HttpClient } from '@angular/common/http';
 import * as TodoActions from './todo.actions';
 import { selectAll, TodosState } from './reducer';
 import { selectAllTodos } from './state';
+import { EMPTY, of } from 'rxjs';
 import { Todo } from '../models/Todo';
 import { TodoService } from './todo.service';
 import { Observable } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable()
 export class TodoEffects {
@@ -24,7 +27,8 @@ export class TodoEffects {
     private actions$: Actions,
     private store: Store<TodosState>,
     private http: HttpClient,
-    private todoServices: TodoService
+    private todoServices: TodoService,
+    private snackBar: MatSnackBar
   ) {}
 
   // storedTodo$ = createEffect(
@@ -33,9 +37,17 @@ export class TodoEffects {
     this.actions$.pipe(
       ofType(TodoActions.loadTodos),
       mergeMap(() =>
-        this.todoServices
-          .getAllTodos()
-          .pipe(map((todos: Todo[]) => TodoActions.loadTodosSuccess({ todos })))
+        this.todoServices.getAllTodos().pipe(
+          map((todos: Todo[]) => TodoActions.loadTodosSuccess({ todos })),
+          catchError((error) => {
+            console.error('Error in loadTodos effect:', error);
+            return of(
+              TodoActions.loadTodosFail({
+                ErrorText: 'Failed to load todos. Please try again.',
+              })
+            );
+          })
+        )
       )
     )
   );
@@ -43,10 +55,14 @@ export class TodoEffects {
   addTodo$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(TodoActions.ADD_TODO),
-      concatMap((action) => {
-        return this.todoServices
-          .addTodo(action.todo)
-          .pipe(map((todo) => TodoActions.todoAdded({ todo })));
+      concatMap(({ todo }) => {
+        return this.todoServices.addTodo(todo).pipe(
+          map((todo) =>
+            TodoActions.todoAdded({
+              todo,
+            })
+          )
+        );
       })
     );
   });

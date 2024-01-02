@@ -37,11 +37,11 @@ import { TodosState } from './reducer';
 
 export const ADD_TODO = createAction(
   '[Todo] Add Todo',
-  props<{ todo: string }>()
+  props<{ todo: Todo }>()
 );
 export const todoAdded = createAction(
   '[Todo] added todo Success',
-  props<{ todo: string }>()
+  props<{ todo: Todo }>()
 );
 
 export const DELETE_TODO = createAction(
@@ -95,3 +95,8 @@ export const loadTodosSuccess = createAction(
   props<{ todos: Todo[] }>()
 );
 export const loadTodos = createAction('[Todo] load todo ');
+export const FailLoadTodos = createAction('[Todo]Fail load todo ');
+export const loadTodosFail = createAction(
+  '[Todo] Load Todos Fail',
+  props<{ ErrorText: string }>()
+);
