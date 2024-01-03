@@ -33,7 +33,7 @@ describe('reducerTodo', () => {
       complete: false,
       editing: false,
     };
-    const action = Actions.ADD_TODO({ todo });
+    const action = Actions.todoAdded({ todo });
 
     // Act
     const newState = todoReducer(initialState, action);
@@ -48,7 +48,7 @@ describe('reducerTodo', () => {
       ...initialState,
       todos: [{ id: 1, name: 'Test Todo', complete: false, editing: false }],
     };
-    const action = Actions.DELETE_TODO({ id: 1 });
+    const action = Actions.todoDeleted({ id: 1 });
 
     // Act
     const newState = todoReducer(initialTodo, action);
@@ -69,8 +69,8 @@ describe('reducerTodo', () => {
       errorMessage: '',
     };
 
-    const action = Actions.UPDATE_TODO({ id: 1 });
-    const actionWithInvalidId = Actions.UPDATE_TODO({ id: 4 });
+    const action = Actions.markAsCompleted({ id: 1 });
+    const actionWithInvalidId = Actions.markAsCompleted({ id: 4 });
 
     // Act
     const newState = todoReducer(initialState, action);
@@ -111,7 +111,7 @@ describe('reducerTodo', () => {
       complete: false,
       editing: false,
     };
-    const action = Actions.EDIT_TODO({ id: 1, todo: updatedTodo.name });
+    const action = Actions.todoToBeEdit({ id: 1, todo: updatedTodo.name });
 
     // Act
     const newState = todoReducer(initialState, action);
@@ -138,7 +138,7 @@ describe('reducerTodo', () => {
       errorMessage: '',
     };
 
-    const Action = Actions.CLEAR_COMPLETED_TODO({ id: 1 });
+    const Action = Actions.CLEAR_COMPLETED_TODO_SUCCESS({ id: 1 });
     //Act
     const newState = todoReducer(initialState, Action);
 

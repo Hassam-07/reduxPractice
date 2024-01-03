@@ -1,93 +1,146 @@
-import { TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { provideMockStore, MockStore } from '@ngrx/store/testing';
-import { Actions, ofType } from '@ngrx/effects';
-import { EMPTY, of } from 'rxjs';
+import { TestBed } from '@angular/core/testing';
+import { Actions } from '@ngrx/effects';
+import { provideMockActions } from '@ngrx/effects/testing';
+import { Observable, of, throwError } from 'rxjs';
+
+import { StoreModule } from '@ngrx/store';
+import { TodoActions } from '.';
 import { TodoEffects } from './todo.effects';
-import * as TodoActions from './todo.actions';
-import { TodosState, initialState } from './reducer';
-import { selectAllTodos } from './state';
-import { Todo } from '../models/Todo';
+import { TodoService } from './todo.service';
 
 describe('TodoEffects', () => {
   let effects: TodoEffects;
-  let actions: Actions;
-  let store: MockStore<TodosState>;
+  let actions$: Observable<any>;
+  let todoService: jasmine.SpyObj<TodoService>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
+      imports: [StoreModule.forRoot({})],
       providers: [
         TodoEffects,
-        provideMockStore({ initialState }),
+        provideMockActions(() => actions$),
         {
-          provide: Actions,
-          useValue: EMPTY,
+          provide: TodoService,
+          useValue: jasmine.createSpyObj('ReduxTodoService', [
+            'getAllTodos',
+            'addTodo',
+            'deleteTodo',
+            'updateTodo',
+            'markAsComplete',
+          ]),
         },
       ],
     });
 
     effects = TestBed.inject(TodoEffects);
-    actions = TestBed.inject(Actions);
-    store = TestBed.inject(MockStore);
+    actions$ = TestBed.inject(Actions);
+    todoService = TestBed.inject(TodoService) as jasmine.SpyObj<TodoService>;
   });
 
-  it('should store todos in local storage on AddTodo action', () => {
-    const todo: Todo = {
-      id: '1',
-      name: 'hassam',
-      complete: false,
-      editing: false,
-    };
+  it('should dispatch loadTodoSuccess action on successful loadTodos', () => {
+    const todos = [
+      { id: '1', name: 'Todo 1', complete: false, editing: false },
+    ];
+    const action = TodoActions.loadTodosSuccess({ todos });
 
-    const action = TodoActions.ADD_TODO({ todo });
-    spyOnProperty(localStorage, 'setItem');
-    // Spy on store.dispatch
-    spyOn(store, 'dispatch');
+    todoService.getAllTodos.and.returnValue(of(todos));
 
-    // Dispatch action
-    store.dispatch(action);
-    expect(store.dispatch).toHaveBeenCalledWith(action);
-  });
+    actions$ = of(action);
 
-  it('should store todos in local storage on ADDTODO action', fakeAsync(() => {
-    // Arrange
-    const todo = {
-      id: '1',
-      name: 'hassam',
-      complete: false,
-      editing: false,
-    };
-    const action = TodoActions.ADD_TODO({ todo });
-
-    // Mock the selectAllTodos selector
-    spyOn(store, 'pipe').and.returnValue(of([todo]));
-
-    // Mock localStorage.setItem
-    spyOn(localStorage, 'setItem');
-
-    // Act
-    effects.loadTodo$.subscribe();
-
-    tick();
-
-    // Assert
-    expect(localStorage.setItem).toHaveBeenCalledWith(
-      'todos',
-      JSON.stringify([todo])
-    );
-  }));
-  it('should retrieve todos from local storage on entering the todos page', fakeAsync(() => {
-    // Arrange
-    const todos = [{ id: 1, name: 'Todo 1', complete: false, editing: false }];
-    spyOn(localStorage, 'getItem').and.returnValue(JSON.stringify(todos));
-    const action = TodoActions.enterTodosPage();
-    spyOn(actions, 'pipe').and.returnValue(of(action));
-
-    // Act
     effects.loadTodo$.subscribe((resultAction) => {
-      // Assert
       expect(resultAction).toEqual(
         TodoActions.loadTodosSuccess({ todos: todos })
       );
     });
-  }));
+  });
+
+  it('should dispatch showNetworkError action on error in loadTodos', () => {
+    const error = 'Failed to load todos. Please try again.';
+    const action = TodoActions.loadTodosFail({
+      errorMessage: 'Failed to load todos. Please try again.',
+    });
+
+    todoService.getAllTodos.and.returnValue(throwError(error));
+
+    actions$ = of(action);
+
+    effects.loadTodo$.subscribe((resultAction) => {
+      expect(resultAction).toEqual(jasmine.any(TodoActions.loadTodosFail));
+    });
+  });
+
+  it('should dispatch todoAdded action on successful addTodo', () => {
+    const todo = { id: '1', name: 'New Todo', complete: false, editing: false };
+    const action = TodoActions.ADD_TODO({ todo });
+
+    todoService.addTodo.and.returnValue(of(todo));
+
+    actions$ = of(action);
+
+    effects.addTodo$.subscribe((resultAction) => {
+      expect(resultAction).toEqual(TodoActions.todoAdded({ todo }));
+    });
+  });
+
+  it('should dispatch todoDeleted action on successful deleteTodo', () => {
+    const action = TodoActions.DELETE_TODO({ id: 1 });
+
+    todoService.deleteTodo.and.returnValue(of(null));
+
+    actions$ = of(action);
+
+    effects.deleteTodo$.subscribe((resultAction) => {
+      expect(resultAction).toEqual(TodoActions.todoDeleted({ id: 1 }));
+    });
+  });
+
+  it('should dispatch todoToBeUpdated action on successful updateTodo', () => {
+    const todo = {
+      id: 1,
+      name: 'Updated Todo',
+      complete: false,
+      editing: false,
+    };
+    const action = TodoActions.EDIT_TODO({
+      id: 1,
+      todo: todo.name,
+    });
+
+    todoService.editTodo.and.returnValue(of(action.todo));
+
+    actions$ = of(action);
+
+    effects.updateTodo$.subscribe((resultAction) => {
+      expect(resultAction).toEqual(
+        TodoActions.todoToBeEdit({ id: 1, todo: todo.name })
+      );
+    });
+  });
+
+  it('should dispatch markAsCompleted action on successful markAsComplete', () => {
+    const todo = { id: 1, name: 'Todo 1', complete: false };
+    const action = TodoActions.UPDATE_TODO({ id: 1 });
+
+    todoService.markAsComplete.and.returnValue(of());
+
+    actions$ = of(action);
+
+    effects.markAsComplete$.subscribe((resultAction) => {
+      expect(resultAction).toEqual(TodoActions.markAsCompleted({ id: 1 }));
+    });
+  });
+
+  it('should dispatch clearCompletedSuccess action on successful clearCompleted', () => {
+    const action = TodoActions.CLEAR_COMPLETED_TODO({ id: 1 });
+
+    todoService.getAllTodos.and.returnValue(of([]));
+
+    actions$ = of(action);
+
+    effects.clearCompleted$.subscribe((resultAction) => {
+      expect(resultAction).toEqual(
+        TodoActions.CLEAR_COMPLETED_TODO_SUCCESS({ id: 1 })
+      );
+    });
+  });
 });

@@ -23,13 +23,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 @Injectable()
 export class TodoEffects {
   private apiUrl = 'http://localhost:3000/todos';
-  constructor(
-    private actions$: Actions,
-    private store: Store<TodosState>,
-    private http: HttpClient,
-    private todoServices: TodoService,
-    private snackBar: MatSnackBar
-  ) {}
+  constructor(private actions$: Actions, private todoServices: TodoService) {}
 
   // storedTodo$ = createEffect(
   //   () =>
@@ -61,6 +55,13 @@ export class TodoEffects {
             TodoActions.todoAdded({
               todo,
             })
+          ),
+          catchError((error) =>
+            of(
+              TodoActions.todoAddedFailure({
+                error,
+              })
+            )
           )
         );
       })
@@ -71,9 +72,16 @@ export class TodoEffects {
     this.actions$.pipe(
       ofType(TodoActions.DELETE_TODO),
       mergeMap((action) =>
-        this.todoServices
-          .deleteTodo(action.id)
-          .pipe(map(() => TodoActions.todoDeleted({ id: action.id })))
+        this.todoServices.deleteTodo(action.id).pipe(
+          map(() => TodoActions.todoDeleted({ id: action.id })),
+          catchError((error) =>
+            of(
+              TodoActions.todoDeletedFailure({
+                error,
+              })
+            )
+          )
+        )
       )
     )
   );
@@ -81,13 +89,18 @@ export class TodoEffects {
     this.actions$.pipe(
       ofType(TodoActions.EDIT_TODO),
       mergeMap((action) =>
-        this.todoServices
-          .editTodo(action.id, action.todo)
-          .pipe(
-            map(() =>
-              TodoActions.todoToBeEdit({ id: action.id, todo: action.todo })
+        this.todoServices.editTodo(action.id, action.todo).pipe(
+          map(() =>
+            TodoActions.todoToBeEdit({ id: action.id, todo: action.todo })
+          ),
+          catchError((error) =>
+            of(
+              TodoActions.todoEditFailure({
+                error,
+              })
             )
           )
+        )
       )
     )
   );
@@ -96,10 +109,65 @@ export class TodoEffects {
     this.actions$.pipe(
       ofType(TodoActions.UPDATE_TODO),
       mergeMap((action) =>
-        this.todoServices
-          .markAsComplete(action.id)
-          .pipe(map(() => TodoActions.markAsCompleted({ id: action.id })))
+        this.todoServices.markAsComplete(action.id).pipe(
+          map(() => TodoActions.markAsCompleted({ id: action.id })),
+          catchError((error) =>
+            of(
+              TodoActions.markAsCompletedFailure({
+                error,
+              })
+            )
+          )
+        )
       )
     )
   );
+  clearCompleted$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TodoActions.CLEAR_COMPLETED_TODO),
+      mergeMap((action) =>
+        this.todoServices.clearCompleted().pipe(
+          map(() => TodoActions.CLEAR_COMPLETED_TODO_SUCCESS({ id: action.id })),
+          catchError((error) =>
+            of(
+              TodoActions.CLEAR_COMPLETED_TODO_FAILURE({
+                error,
+              })
+            )
+          )
+        )
+      )
+    )
+  );
+  // clearCompleted$ = createEffect(() =>
+  //   this.actions$.pipe(
+  //     ofType(TodoActions.CLEAR_COMPLETED_TODO),
+  //     mergeMap(() =>
+  //       this.todoServices.getAllTodos().pipe(
+  //         map((todos) => {
+  //           const completedTodos = todos.filter((todo) => todo.complete);
+  //           completedTodos.forEach((completedTodo) => {
+  //             if (completedTodo.id) {
+  //               this.todoServices
+  //                 .deleteTodo(completedTodo.id)
+  //                 .subscribe(() => {
+  //                   console.log('delete', completedTodo.id);
+  //                 });
+  //             }
+  //           });
+  //           return TodoActions.CLEAR_COMPLETED_TODO_SUCCESS({ id: });
+  //         }),
+  //         catchError((error) => {
+  //           console.error('Error deleting todo:', error);
+  //           of(
+  //             TodoActions.showNetworkError({
+  //               errorMessage: 'Network error. Not all completed todos Deleted',
+  //             })
+  //           );
+  //           return EMPTY;
+  //         })
+  //       )
+  //     )
+  //   )
+  // );
 }

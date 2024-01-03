@@ -124,7 +124,7 @@ export const initialState: TodosState = {
 
 export const todoReducer = createReducer(
   initialState,
-  on(TodoActions.ADD_TODO, (state, { todo }) => {
+  on(TodoActions.todoAdded, (state, { todo }) => {
     const newTodo: Todo = {
       id: uuidv4(),
       name: todo.name,
@@ -134,19 +134,19 @@ export const todoReducer = createReducer(
     return { ...state, todos: [...state.todos, newTodo] };
   }),
 
-  on(TodoActions.DELETE_TODO, (state, { id }) => {
+  on(TodoActions.todoDeleted, (state, { id }) => {
     const updatedTodos = state.todos.filter((todo) => todo.id !== id);
     return { ...state, todos: updatedTodos };
   }),
 
-  on(TodoActions.UPDATE_TODO, (state, { id }) => {
+  on(TodoActions.markAsCompleted, (state, { id }) => {
     const updatedTodos = state.todos.map((todo) =>
       todo.id === id ? { ...todo, complete: !todo.complete } : todo
     );
     return { ...state, todos: updatedTodos };
   }),
 
-  on(TodoActions.EDIT_TODO, (state, { id, todo }) => {
+  on(TodoActions.todoToBeEdit, (state, { id, todo }) => {
     const editedTodos = state.todos.map((t) =>
       t.id === id ? { ...t, name: todo } : t
     );
