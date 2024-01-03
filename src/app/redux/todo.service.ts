@@ -14,7 +14,7 @@ import { Store } from '@ngrx/store';
   providedIn: 'root',
 })
 export class TodoService {
-  private apiUrl = 'http://localhost:3000/todos1';
+  private apiUrl = 'http://localhost:3000/todos';
 
   constructor(private http: HttpClient, private store: Store) {}
 

@@ -1,17 +1,38 @@
+import { Todo } from '../models/Todo';
 import { todoReducer, initialState, TodosState } from './reducer';
 import * as Actions from './todo.actions';
 import { Action } from 'rxjs/internal/scheduler/Action';
+import { v4 as uuidv4 } from 'uuid';
 
-// jest.mock('uuid', () => {
-//   return {
-//     ...jest.requireActual('uuid'),
-//     v4: () => 'mocked-uuid', // Replace 'mocked-uuid' with your desired mocked UUID
-//   };
-// });
+const todos: Todo[] = [
+  {
+    id: '1',
+    name: 'hassam',
+    complete: false,
+    editing: false,
+  },
+  {
+    id: '2',
+    name: 'has',
+    complete: false,
+    editing: false,
+  },
+  {
+    id: '3',
+    name: 'h',
+    complete: false,
+    editing: false,
+  },
+];
 describe('reducerTodo', () => {
   it('should handle "ADDTODO" action', () => {
     // Arrange
-    const todo = 'test todo';
+    const todo = {
+      id: '1',
+      name: 'hassam',
+      complete: false,
+      editing: false,
+    };
     const action = Actions.ADD_TODO({ todo });
 
     // Act
@@ -19,7 +40,7 @@ describe('reducerTodo', () => {
 
     // Assert
     expect(newState.todos.length).toBe(1);
-    expect(newState.todos[0].name).toEqual(todo);
+    expect(newState.todos[0].name).toEqual(todo.name);
   });
   it('should handle DELETETODO action', () => {
     // Arrange
@@ -45,6 +66,7 @@ describe('reducerTodo', () => {
         { id: 3, name: 'Todo 3', complete: false, editing: false },
       ],
       filter: 'all',
+      errorMessage: '',
     };
 
     const action = Actions.UPDATE_TODO({ id: 1 });
@@ -80,6 +102,7 @@ describe('reducerTodo', () => {
         { id: 3, name: 'Todo 3', complete: false, editing: false },
       ],
       filter: 'all',
+      errorMessage: '',
     };
 
     const updatedTodo = {
@@ -112,6 +135,7 @@ describe('reducerTodo', () => {
         { id: 3, name: 'Todo 3', complete: false, editing: false },
       ],
       filter: 'all',
+      errorMessage: '',
     };
 
     const Action = Actions.CLEAR_COMPLETED_TODO({ id: 1 });
@@ -135,6 +159,7 @@ describe('reducerTodo', () => {
         { id: 3, name: 'Todo 3', complete: true, editing: false },
       ],
       filter: 'all',
+      errorMessage: '',
     };
 
     const actionCompleted = Actions.SET_FILTER({ filter: 'completed' });
@@ -158,6 +183,7 @@ describe('reducerTodo', () => {
     const initialState: TodosState = {
       todos: [],
       filter: 'all',
+      errorMessage: '',
     };
 
     const todosToAdd = [

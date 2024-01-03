@@ -57,7 +57,7 @@ export class AppComponent implements OnInit {
           console.error('Error loading todos:', error);
           this.store.dispatch(
             TodoActions.loadTodosFail({
-              ErrorText: 'Failed to load todos. Please try again.',
+              errorMessage: 'Failed to load todos. Please try again.',
             })
           );
 
@@ -81,6 +81,9 @@ export class AppComponent implements OnInit {
         },
       })
     );
+  }
+  closeBtn() {
+    this.store.dispatch(TodoActions.removeErrorModal());
   }
 
   deleteTodo(todoId: number): void {

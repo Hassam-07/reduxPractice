@@ -31,7 +31,12 @@ describe('TodoEffects', () => {
   });
 
   it('should store todos in local storage on AddTodo action', () => {
-    const todo: string = 'Todo 1';
+    const todo: Todo = {
+      id: '1',
+      name: 'hassam',
+      complete: false,
+      editing: false,
+    };
 
     const action = TodoActions.ADD_TODO({ todo });
     spyOnProperty(localStorage, 'setItem');
@@ -45,7 +50,12 @@ describe('TodoEffects', () => {
 
   it('should store todos in local storage on ADDTODO action', fakeAsync(() => {
     // Arrange
-    const todo ='Todo 1';
+    const todo = {
+      id: '1',
+      name: 'hassam',
+      complete: false,
+      editing: false,
+    };
     const action = TodoActions.ADD_TODO({ todo });
 
     // Mock the selectAllTodos selector
@@ -55,7 +65,7 @@ describe('TodoEffects', () => {
     spyOn(localStorage, 'setItem');
 
     // Act
-    effects.storedTodo$.subscribe();
+    effects.loadTodo$.subscribe();
 
     tick();
 
@@ -73,9 +83,11 @@ describe('TodoEffects', () => {
     spyOn(actions, 'pipe').and.returnValue(of(action));
 
     // Act
-    effects.retrieveTodo$.subscribe((resultAction) => {
+    effects.loadTodo$.subscribe((resultAction) => {
       // Assert
-      expect(resultAction).toEqual(TodoActions.setTodo({ todo: todos }));
+      expect(resultAction).toEqual(
+        TodoActions.loadTodosSuccess({ todos: todos })
+      );
     });
   }));
 });

@@ -97,6 +97,7 @@
 
 <ng-container *ngIf="todos.errorMessage">
   <div class="snackbar-error">
-    <p>{{ errorMessage }}</p>
+    <p>{{ todos.errorMessage }}</p>
+    <button class="" (click)="close()">close</button>
   </div>
 </ng-container>

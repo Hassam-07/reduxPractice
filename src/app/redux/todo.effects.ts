@@ -43,7 +43,7 @@ export class TodoEffects {
             console.error('Error in loadTodos effect:', error);
             return of(
               TodoActions.loadTodosFail({
-                ErrorText: 'Failed to load todos. Please try again.',
+                errorMessage: 'Failed to load todos. Please try again.',
               })
             );
           })

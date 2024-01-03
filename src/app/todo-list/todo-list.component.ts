@@ -26,6 +26,7 @@ export class TodoListComponent implements OnInit, OnChanges {
   @Output() deleteTodoItem = new EventEmitter();
   @Output() editTodoItem = new EventEmitter();
   @Output() pinTodoItem = new EventEmitter();
+  @Output() closeBtn = new EventEmitter();
   @Output() markAsComplete = new EventEmitter();
   @Output() clearcompletedItems = new EventEmitter<any>();
   todoIdToBeDeleted!: number | undefined;
@@ -66,6 +67,10 @@ export class TodoListComponent implements OnInit, OnChanges {
     this.deleteTodoItem.emit(this.todoIdToBeDeleted);
     this.todoIdToBeDeleted = undefined;
     this.showDeleteModal = false;
+  }
+  close(): void {
+    this.closeBtn.emit();
+    // this.store.dispatch(ErrorActions.removeErrorModal());
   }
   togglePin(todo: Todo) {
     this.pinTodoItem.emit(todo);

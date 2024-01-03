@@ -167,8 +167,12 @@ export const todoReducer = createReducer(
     return { ...state, todos: [...todos], errorMessage: '' };
   }),
   on(TodoActions.loadTodosFail, (state, action) => {
-    return { ...state, errorMessage: action.ErrorText };
-  })
+    return { ...state, errorMessage: action.errorMessage };
+  }),
+  on(TodoActions.removeErrorModal, (state) => ({
+    ...state,
+    errorMessage: '',
+  }))
   // on(TodoActions.loadTodosFail, (state, { ErrorText }) => ({
   //   ...state,
   //   ErrorText,

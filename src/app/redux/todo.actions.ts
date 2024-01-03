@@ -98,5 +98,7 @@ export const loadTodos = createAction('[Todo] load todo ');
 export const FailLoadTodos = createAction('[Todo]Fail load todo ');
 export const loadTodosFail = createAction(
   '[Todo] Load Todos Fail',
-  props<{ ErrorText: string }>()
+  props<{ errorMessage: string }>()
 );
+
+export const removeErrorModal = createAction('[Error] Clear Error');
