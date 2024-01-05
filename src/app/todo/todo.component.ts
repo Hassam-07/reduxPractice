@@ -1,5 +1,5 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormGroup, Validators, FormBuilder, NgForm } from '@angular/forms';
 import { Todo } from '../models/Todo';
 import { Store } from '@ngrx/store';
 
@@ -8,27 +8,33 @@ import { Store } from '@ngrx/store';
   templateUrl: './todo.component.html',
   styleUrls: ['./todo.component.scss'],
 })
-export class TodoComponent implements OnInit {
+export class TodoComponent {
   @Output() addTodoItem = new EventEmitter<any>();
+  @Input() todoInput!: string;
 
-  todoForm: FormGroup = this.fb.group({
-    name: ['', Validators.required],
-  });
-  todos: Todo[] = [];
+  addTodo(todoForm: NgForm) {
+    this.addTodoItem.emit(todoForm.value.name);
 
-  constructor(private fb: FormBuilder, private store: Store) {}
-
-  ngOnInit(): void {
-    this.todoForm = this.fb.group({
-      name: ['', Validators.required],
-    });
-  }
-
-  addTodo() {
-    if (this.todoForm.valid) {
-      const newTodo = this.todoForm.value.name;
-      this.todoForm.reset();
-      this.addTodoItem.emit(newTodo);
-    }
+    todoForm.reset();
   }
 }
+// if (this.todoForm.valid) {
+//   const newTodo = this.todoForm.value.name;
+//   this.todoForm.reset();
+//   this.addTodoItem.emit(newTodo);
+// }
+
+// @Output() formValue = new EventEmitter();
+
+// todoForm: FormGroup = this.fb.group({
+//   name: ['', Validators.required],
+// });
+// todos: Todo[] = [];
+
+// constructor(private fb: FormBuilder, private store: Store) {}
+
+// ngOnInit(): void {
+//   this.todoForm = this.fb.group({
+//     name: ['', Validators.required],
+//   });
+// }

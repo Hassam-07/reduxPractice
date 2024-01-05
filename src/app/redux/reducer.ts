@@ -23,7 +23,7 @@
 //       id: uuidv4(),
 //       name: action.payload?.['todo'],
 //       complete: false,
-//       editing: false,
+//
 //     };
 //     return {
 //       ...state,
@@ -113,13 +113,13 @@ import { v4 as uuidv4 } from 'uuid';
 export interface TodosState {
   todos: Todo[];
   filter: 'all' | 'active' | 'completed';
-  errorMessage: string | null;
+  // errorMessage: string | null;
 }
 
 export const initialState: TodosState = {
   todos: [],
   filter: 'all',
-  errorMessage: null,
+  // errorMessage: null,
 };
 
 export const todoReducer = createReducer(
@@ -129,7 +129,6 @@ export const todoReducer = createReducer(
       id: uuidv4(),
       name: todo.name,
       complete: false,
-      editing: false,
     };
     return { ...state, todos: [...state.todos, newTodo] };
   }),
@@ -139,24 +138,36 @@ export const todoReducer = createReducer(
     return { ...state, todos: updatedTodos };
   }),
 
-  on(TodoActions.markAsCompleted, (state, { id }) => {
+  on(TodoActions.markAsCompletedSuccess, (state, { id }) => {
     const updatedTodos = state.todos.map((todo) =>
       todo.id === id ? { ...todo, complete: !todo.complete } : todo
     );
     return { ...state, todos: updatedTodos };
   }),
+  // on(TodoActions.markAsCompletedSuccess, (state, { id }) => ({
+  //   ...state,
+  //   todos: state.todos.map((todo) =>
+  //     todo.id === todo.id ? { ...todo, complete: !todo.complete } : todo
+  //   ),
+  // })),
 
+  // on(TodoActions.todoToBeEdit, (state, { id, todo }) => {
+  //   const editedTodos = state.todos.map((t) =>
+  //     t.id === id ? { ...t, name: todo } : t
+  //   );
+  //   return { ...state, todos: editedTodos };
+  // }),
   on(TodoActions.todoToBeEdit, (state, { id, todo }) => {
-    const editedTodos = state.todos.map((t) =>
-      t.id === id ? { ...t, name: todo } : t
+    const updatedTodos = state.todos.map((todoUpdate) =>
+      todoUpdate.id === id ? { ...todoUpdate, name: todo.name } : todoUpdate
     );
-    return { ...state, todos: editedTodos };
+    return { ...state, todos: updatedTodos };
   }),
 
-  on(TodoActions.CLEAR_COMPLETED_TODO, (state) => {
-    const clearTodos = state.todos.filter((todo) => !todo.complete);
-    return { ...state, todos: clearTodos };
-  }),
+  // on(TodoActions.CLEAR_COMPLETED_TODO_SUCCESS, (state) => {
+  //   const clearTodos = state.todos.filter((todo) => !todo.complete);
+  //   return { ...state, todos: clearTodos };
+  // }),
   on(TodoActions.SET_FILTER, (state, { filter }) => {
     return { ...state, filter };
   }),
@@ -165,14 +176,7 @@ export const todoReducer = createReducer(
   }),
   on(TodoActions.loadTodosSuccess, (state, { todos }) => {
     return { ...state, todos: [...todos], errorMessage: '' };
-  }),
-  on(TodoActions.loadTodosFail, (state, action) => {
-    return { ...state, errorMessage: action.errorMessage };
-  }),
-  on(TodoActions.removeErrorModal, (state) => ({
-    ...state,
-    errorMessage: '',
-  }))
+  })
   // on(TodoActions.loadTodosFail, (state, { ErrorText }) => ({
   //   ...state,
   //   ErrorText,

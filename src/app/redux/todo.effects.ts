@@ -1,5 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Actions, ofType, createEffect } from '@ngrx/effects';
+import {
+  Actions,
+  ofType,
+  createEffect,
+  concatLatestFrom,
+  act,
+} from '@ngrx/effects';
 import {
   tap,
   withLatestFrom,
@@ -23,7 +29,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 @Injectable()
 export class TodoEffects {
   private apiUrl = 'http://localhost:3000/todos';
-  constructor(private actions$: Actions, private todoServices: TodoService) {}
+  constructor(
+    private actions$: Actions,
+    private todoServices: TodoService,
+    private readonly store: Store,
+    private snackbar: MatSnackBar
+  ) {}
 
   // storedTodo$ = createEffect(
   //   () =>
@@ -36,8 +47,8 @@ export class TodoEffects {
           catchError((error) => {
             console.error('Error in loadTodos effect:', error);
             return of(
-              TodoActions.loadTodosFail({
-                errorMessage: 'Failed to load todos. Please try again.',
+              TodoActions.FailLoadTodos({
+                error,
               })
             );
           })
@@ -85,7 +96,7 @@ export class TodoEffects {
       )
     )
   );
-  updateTodo$: Observable<Action> = createEffect(() =>
+  editTodo$: Observable<Action> = createEffect(() =>
     this.actions$.pipe(
       ofType(TodoActions.EDIT_TODO),
       mergeMap((action) =>
@@ -107,10 +118,15 @@ export class TodoEffects {
 
   markAsComplete$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(TodoActions.UPDATE_TODO),
+      ofType(TodoActions.markAsCompleted),
       mergeMap((action) =>
-        this.todoServices.markAsComplete(action.id).pipe(
-          map(() => TodoActions.markAsCompleted({ id: action.id })),
+        this.todoServices.markAsComplete(action.id, !action.todo.complete).pipe(
+          map(() =>
+            TodoActions.markAsCompletedSuccess({
+              id: action.id,
+              todo: action.todo,
+            })
+          ),
           catchError((error) =>
             of(
               TodoActions.markAsCompletedFailure({
@@ -122,52 +138,36 @@ export class TodoEffects {
       )
     )
   );
+
   clearCompleted$ = createEffect(() =>
     this.actions$.pipe(
       ofType(TodoActions.CLEAR_COMPLETED_TODO),
-      mergeMap((action) =>
-        this.todoServices.clearCompleted().pipe(
-          map(() => TodoActions.CLEAR_COMPLETED_TODO_SUCCESS({ id: action.id })),
-          catchError((error) =>
-            of(
-              TodoActions.CLEAR_COMPLETED_TODO_FAILURE({
-                error,
-              })
-            )
-          )
-        )
+      concatLatestFrom(() => [this.store.pipe(select(selectAllTodos))]),
+      mergeMap(([{}, todos]) =>
+        todos
+          .filter((todo) => todo.complete)
+          .map((todo) => TodoActions.DELETE_TODO({ id: todo.id as number }))
       )
     )
   );
-  // clearCompleted$ = createEffect(() =>
-  //   this.actions$.pipe(
-  //     ofType(TodoActions.CLEAR_COMPLETED_TODO),
-  //     mergeMap(() =>
-  //       this.todoServices.getAllTodos().pipe(
-  //         map((todos) => {
-  //           const completedTodos = todos.filter((todo) => todo.complete);
-  //           completedTodos.forEach((completedTodo) => {
-  //             if (completedTodo.id) {
-  //               this.todoServices
-  //                 .deleteTodo(completedTodo.id)
-  //                 .subscribe(() => {
-  //                   console.log('delete', completedTodo.id);
-  //                 });
-  //             }
-  //           });
-  //           return TodoActions.CLEAR_COMPLETED_TODO_SUCCESS({ id: });
-  //         }),
-  //         catchError((error) => {
-  //           console.error('Error deleting todo:', error);
-  //           of(
-  //             TodoActions.showNetworkError({
-  //               errorMessage: 'Network error. Not all completed todos Deleted',
-  //             })
-  //           );
-  //           return EMPTY;
-  //         })
-  //       )
-  //     )
-  //   )
-  // );
+
+  handleError$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(
+          TodoActions.FailLoadTodos,
+          TodoActions.todoAddedFailure,
+          TodoActions.todoDeletedFailure,
+          TodoActions.todoEditFailure,
+          TodoActions.markAsCompletedFailure
+        ),
+        tap(() =>
+          this.snackbar.open(
+            'Something went wrong. Please try again later.',
+            'Error'
+          )
+        )
+      ),
+    { dispatch: false }
+  );
 }

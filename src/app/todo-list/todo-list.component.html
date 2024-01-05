@@ -1,103 +1,84 @@
-<ng-container *ngIf="!todos.errorMessage">
-  <div class="list">
-    <div class="todo-con">
-      <div *ngFor="let todo of todos.todos" class="todo-li">
-        <span
-          (click)="markCompleted(todo.id)"
-          [class.active-check]="todo.complete"
-          class="check"
-        >
-          <img src="assets/images/icon-check.svg" alt=""
-        /></span>
-        <div>
-          <p class="todos" [class.completed]="todo.complete">
-            {{ todo.name }}
-          </p>
-        </div>
-        <div *ngIf="todo.editing">
-          <input
-            class="edited-input"
-            type="text"
-            [(ngModel)]="todo.name"
-            (blur)="update(todo)"
-          />
-          <button class="edit" (click)="save(todo)">
-            <img
-              src="./../../../assets/images/save.png"
-              width="30px"
-              height="20px"
-              alt=""
-            />
-          </button>
-        </div>
-        <button (click)="editTodo(todo)" class="edit">
-          <img src="assets/images/edit.png" alt="" />
-        </button>
-        <button
-          (click)="openDeleteQuestionConfirmationDialog(todo.id)"
-          class="close"
-        >
-          <img src="assets/images/icon-cross.svg" alt="" />
-        </button>
+<!-- <ng-container *ngIf="!todos.errorMessage"> -->
+<div class="list">
+  <div class="todo-con">
+    <div *ngFor="let todo of todos" class="todo-li">
+      <span
+        (click)="markCompleted(todo)"
+        [class.active-check]="todo.complete"
+        class="check"
+      >
+        <img src="assets/images/icon-check.svg" alt=""
+      /></span>
+      <div>
+        <p class="todos" [class.completed]="todo.complete">
+          {{ todo.name }}
+        </p>
+      </div>
+      <button (click)="editTodo(todo)" class="edit">
+        <img src="assets/images/edit.png" alt="" />
+      </button>
+      <button
+        (click)="openDeleteQuestionConfirmationDialog(todo.id)"
+        class="close"
+      >
+        <img src="assets/images/icon-cross.svg" alt="" />
+      </button>
 
-        <ng-container>
-          <div
-            *ngIf="showDeleteModal"
-            (click)="closeDeleteQuestionConfirmationDialog()"
-            class="modal-background"
-            data-test="modal-background"
-          >
-            <div class="modal-content">
-              <p class="content">Do you want to delete this question?</p>
-              <div class="buttons">
-                <button
-                  (click)="closeDeleteQuestionConfirmationDialog()"
-                  class="cancelBtn"
-                  data-test="cancelBtn"
-                >
-                  Cancel
-                </button>
-                <button
-                  (click)="deleteTodo()"
-                  class="deleteBtn"
-                  type="button"
-                  data-test="deleteBtn"
-                >
-                  Confirm
-                </button>
-              </div>
+      <ng-container>
+        <div
+          *ngIf="showDeleteModal"
+          (click)="closeDeleteQuestionConfirmationDialog()"
+          class="modal-background"
+          data-test="modal-background"
+        >
+          <div class="modal-content">
+            <p class="content">Do you want to delete this question?</p>
+            <div class="buttons">
+              <button
+                (click)="closeDeleteQuestionConfirmationDialog()"
+                class="cancelBtn"
+                data-test="cancelBtn"
+              >
+                Cancel
+              </button>
+              <button
+                (click)="deleteTodo()"
+                class="deleteBtn"
+                type="button"
+                data-test="deleteBtn"
+              >
+                Confirm
+              </button>
             </div>
           </div>
-        </ng-container>
-      </div>
+        </div>
+      </ng-container>
     </div>
   </div>
-  <div class="info">
-    <p class="left">{{ incompleteTodos }} items left</p>
-    <div class="choice">
-      <p [class.active]="activeFilter === 'all'" (click)="setFilter('all')">
-        All
-      </p>
-      <p
-        [class.active]="activeFilter === 'active'"
-        (click)="setFilter('active')"
-      >
-        Active
-      </p>
-      <p
-        [class.active]="activeFilter === 'completed'"
-        (click)="setFilter('completed')"
-      >
-        Completed
-      </p>
-    </div>
-    <p class="clear" (click)="clearCompleted()">Clear Completed</p>
+</div>
+<div class="info">
+  <p class="left">{{ incompleteTodos }} items left</p>
+  <div class="choice">
+    <p [class.active]="activeFilter === 'all'" (click)="setFilter('all')">
+      All
+    </p>
+    <p [class.active]="activeFilter === 'active'" (click)="setFilter('active')">
+      Active
+    </p>
+    <p
+      [class.active]="activeFilter === 'completed'"
+      (click)="setFilter('completed')"
+    >
+      Completed
+    </p>
   </div>
-</ng-container>
+  <p class="clear" (click)="clearCompleted()">Clear Completed</p>
+</div>
+<!-- </ng-container> -->
 
-<ng-container *ngIf="todos.errorMessage">
+<!-- <ng-container *ngIf="todos.errorMessage">
   <div class="snackbar-error">
     <p>{{ todos.errorMessage }}</p>
     <button class="" (click)="close()">close</button>
   </div>
-</ng-container>
+</ng-container> -->

@@ -19,7 +19,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./todo-list.component.scss'],
 })
 export class TodoListComponent implements OnInit, OnChanges {
-  @Input() todos!: TodosState | null;
+  @Input() todos!: Todo[] | null;
   @Input() incompleteTodos!: number | null;
   @Input() showDeleteModal!: boolean;
   @Input() selectedTodo: Todo | null = null;
@@ -55,9 +55,9 @@ export class TodoListComponent implements OnInit, OnChanges {
     console.log(todoId);
   }
 
-  startEditing(todo: Todo) {
-    todo.editing = true;
-  }
+  // startEditing(todo: Todo) {
+  //   todo.editing = true;
+  // }
 
   closeDeleteQuestionConfirmationDialog() {
     this.todoIdToBeDeleted = undefined;
@@ -76,25 +76,15 @@ export class TodoListComponent implements OnInit, OnChanges {
     this.pinTodoItem.emit(todo);
   }
 
-  markCompleted(todo: number) {
+  markCompleted(todo: Todo) {
     this.markAsComplete.emit(todo);
   }
 
   editTodo(todo: Todo) {
-    this.editedText = todo.name;
-    this.editTodoItem.emit({ id: todo.id, text: todo.name });
-    // todo.editing = true;
+    this.editTodoItem.emit(todo);
     console.log(todo);
   }
 
-  save(todo: Todo) {
-    todo.name = this.editedText;
-    todo.editing = false;
-  }
-
-  update(todo: Todo) {
-    todo.editing = false;
-  }
   clearCompleted() {
     this.clearcompletedItems.emit();
   }

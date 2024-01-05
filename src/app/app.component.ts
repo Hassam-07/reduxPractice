@@ -5,7 +5,7 @@ import { Observable, catchError, of, startWith } from 'rxjs';
 import { Todo } from './models/Todo';
 import {
   ADD_TODO,
-  UPDATE_TODO,
+  markAsCompleted,
   DELETE_TODO,
   EDIT_TODO,
   SET_FILTER,
@@ -18,7 +18,6 @@ import {
   selectFilteredTodos,
   incompleteTodosLength,
   currentTodoTab,
-  allTodosInfo,
 } from './redux/state';
 import { TodoActions } from './redux';
 import { TodoService } from './redux/todo.service';
@@ -32,6 +31,7 @@ export class AppComponent implements OnInit {
   showDeleteModal = false;
   showLoader = true;
   selectedTodo: Todo | null = null;
+  todoInput = '';
   allTodos$!: Observable<Todo[]>;
   activeFilter: 'all' | 'active' | 'completed' = 'all';
   incompleteTodosLength$!: Observable<number>;
@@ -42,46 +42,56 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.getTodos();
     // this.store.dispatch(TodoActions.loadTodos());
-    // this.allTodos$ = this.store.select(selectFilteredTodos);
-    this.todoInfo$ = this.store.select(allTodosInfo);
+    this.allTodos$ = this.store.select(selectFilteredTodos);
+    // this.todoInfo$ = this.store.select(allTodosInfo);
     this.activeTab$ = this.store.select(currentTodoTab);
     this.incompleteTodosLength$ = this.store.select(incompleteTodosLength);
     // this.errorMessage$ = this.store.pipe(select('error', 'errorMessage'));
     this.store.dispatch(enterTodosPage());
   }
   getTodos() {
-    this.todoServices
-      .getAllTodos()
-      .pipe(
-        catchError((error) => {
-          console.error('Error loading todos:', error);
-          this.store.dispatch(
-            TodoActions.loadTodosFail({
-              errorMessage: 'Failed to load todos. Please try again.',
-            })
-          );
-
-          return of([]);
-        })
-      )
-      .subscribe((todos) => {
-        this.store.dispatch(TodoActions.loadTodos());
-      });
+    this.store.dispatch(TodoActions.loadTodos());
   }
 
+  editTodo(todo: Todo) {
+    this.selectedTodo = todo;
+    this.todoInput = todo.name;
+  }
   addTodo(newTodo: string) {
-    console.log('parent', newTodo);
-    this.store.dispatch(
-      ADD_TODO({
-        todo: {
-          id: uuidv4(),
+    if (newTodo) {
+      if (this.selectedTodo) {
+        // Editing existing todo
+        let updatedTask: Todo = {
+          ...this.selectedTodo,
           name: newTodo,
-          complete: false,
-          editing: false,
-        },
-      })
-    );
+        };
+
+        this.store.dispatch(
+          TodoActions.EDIT_TODO({
+            id: updatedTask.id,
+            todo: updatedTask,
+          })
+        );
+
+        // Clear the selectedTodo and todoInput
+        this.selectedTodo = null;
+        this.todoInput = '';
+      } else {
+        this.store.dispatch(
+          ADD_TODO({
+            todo: {
+              id: uuidv4(),
+              name: newTodo,
+              complete: false,
+            },
+          })
+        );
+      }
+    }
+    console.log('parent', newTodo);
+    console.log(newTodo);
   }
+
   closeBtn() {
     this.store.dispatch(TodoActions.removeErrorModal());
   }
@@ -90,17 +100,13 @@ export class AppComponent implements OnInit {
     this.store.dispatch(DELETE_TODO({ id: todoId }));
     this.showDeleteModal = false;
   }
-  markCompleted(todoId: number): void {
-    this.store.dispatch(UPDATE_TODO({ id: todoId }));
-    console.log(todoId);
+  markCompleted(todo: Todo): void {
+    this.store.dispatch(markAsCompleted({ id: todo.id, todo: todo }));
+    console.log(todo);
   }
-  handleUpdatedTodo(editInfo: { id: number; text: string }) {
-    this.store.dispatch(EDIT_TODO({ id: editInfo.id, todo: editInfo.text }));
-    console.log(editInfo.text);
-  }
-  clearCompleted(todoId: number): void {
-    this.store.dispatch(CLEAR_COMPLETED_TODO({ id: todoId }));
-    console.log(todoId);
+
+  clearCompleted() {
+    this.store.dispatch(CLEAR_COMPLETED_TODO());
   }
 
   filterTodos(filter: 'all' | 'active' | 'completed'): void {

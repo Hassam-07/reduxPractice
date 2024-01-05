@@ -9,19 +9,16 @@ const todos: Todo[] = [
     id: '1',
     name: 'hassam',
     complete: false,
-    editing: false,
   },
   {
     id: '2',
     name: 'has',
     complete: false,
-    editing: false,
   },
   {
     id: '3',
     name: 'h',
     complete: false,
-    editing: false,
   },
 ];
 describe('reducerTodo', () => {
@@ -31,7 +28,6 @@ describe('reducerTodo', () => {
       id: '1',
       name: 'hassam',
       complete: false,
-      editing: false,
     };
     const action = Actions.todoAdded({ todo });
 
@@ -46,7 +42,7 @@ describe('reducerTodo', () => {
     // Arrange
     const initialTodo = {
       ...initialState,
-      todos: [{ id: 1, name: 'Test Todo', complete: false, editing: false }],
+      todos: [{ id: 1, name: 'Test Todo', complete: false }],
     };
     const action = Actions.todoDeleted({ id: 1 });
 
@@ -61,16 +57,21 @@ describe('reducerTodo', () => {
     // Arrange
     const initialState: TodosState = {
       todos: [
-        { id: 1, name: 'Todo 1', complete: false, editing: false },
-        { id: 2, name: 'Todo 2', complete: false, editing: false },
-        { id: 3, name: 'Todo 3', complete: false, editing: false },
+        { id: 1, name: 'Todo 1', complete: false },
+        { id: 2, name: 'Todo 2', complete: false },
+        { id: 3, name: 'Todo 3', complete: false },
       ],
       filter: 'all',
-      errorMessage: '',
     };
 
-    const action = Actions.markAsCompleted({ id: 1 });
-    const actionWithInvalidId = Actions.markAsCompleted({ id: 4 });
+    const action = Actions.markAsCompleted({
+      id: 1,
+      todo: { id: 1, name: 'Todo 1', complete: false },
+    });
+    const actionWithInvalidId = Actions.markAsCompleted({
+      id: 4,
+      todo: { id: 4, name: 'Todo 1', complete: false },
+    });
 
     // Act
     const newState = todoReducer(initialState, action);
@@ -97,21 +98,19 @@ describe('reducerTodo', () => {
     // Arrange
     const initialState: TodosState = {
       todos: [
-        { id: 1, name: 'Todo 1', complete: false, editing: false },
-        { id: 2, name: 'Todo 2', complete: false, editing: false },
-        { id: 3, name: 'Todo 3', complete: false, editing: false },
+        { id: 1, name: 'Todo 1', complete: false },
+        { id: 2, name: 'Todo 2', complete: false },
+        { id: 3, name: 'Todo 3', complete: false },
       ],
       filter: 'all',
-      errorMessage: '',
     };
 
     const updatedTodo = {
       id: 1,
       name: 'Updated Todo 1',
       complete: false,
-      editing: false,
     };
-    const action = Actions.todoToBeEdit({ id: 1, todo: updatedTodo.name });
+    const action = Actions.todoToBeEdit({ id: 1, todo: updatedTodo });
 
     // Act
     const newState = todoReducer(initialState, action);
@@ -130,15 +129,14 @@ describe('reducerTodo', () => {
     //Arrange
     const initialState: TodosState = {
       todos: [
-        { id: 1, name: 'Todo 1', complete: false, editing: false },
-        { id: 2, name: 'Todo 2', complete: true, editing: false },
-        { id: 3, name: 'Todo 3', complete: false, editing: false },
+        { id: 1, name: 'Todo 1', complete: false },
+        { id: 2, name: 'Todo 2', complete: true },
+        { id: 3, name: 'Todo 3', complete: false },
       ],
       filter: 'all',
-      errorMessage: '',
     };
 
-    const Action = Actions.CLEAR_COMPLETED_TODO_SUCCESS({ id: 1 });
+    const Action = Actions.DELETE_TODO({ id: 1 });
     //Act
     const newState = todoReducer(initialState, Action);
 
@@ -148,18 +146,16 @@ describe('reducerTodo', () => {
     expect(newState.todos[1].id).toBe(3);
     expect(newState.todos[1].name).toBe('Todo 3');
     expect(newState.todos[1].complete).toBe(false);
-    expect(newState.todos[1].editing).toBe(false);
   });
   it('should update the filter when handle FILTERDATA action', () => {
     // Arrange
     const initialState: TodosState = {
       todos: [
-        { id: 1, name: 'Todo 1', complete: true, editing: false },
-        { id: 2, name: 'Todo 2', complete: true, editing: false },
-        { id: 3, name: 'Todo 3', complete: true, editing: false },
+        { id: 1, name: 'Todo 1', complete: true },
+        { id: 2, name: 'Todo 2', complete: true },
+        { id: 3, name: 'Todo 3', complete: true },
       ],
       filter: 'all',
-      errorMessage: '',
     };
 
     const actionCompleted = Actions.SET_FILTER({ filter: 'completed' });
@@ -183,12 +179,11 @@ describe('reducerTodo', () => {
     const initialState: TodosState = {
       todos: [],
       filter: 'all',
-      errorMessage: '',
     };
 
     const todosToAdd = [
-      { id: 1, name: 'Todo 1', complete: false, editing: false },
-      { id: 2, name: 'Todo 2', complete: true, editing: false },
+      { id: 1, name: 'Todo 1', complete: false },
+      { id: 2, name: 'Todo 2', complete: true },
     ];
 
     const action = Actions.setTodo({ todo: todosToAdd });

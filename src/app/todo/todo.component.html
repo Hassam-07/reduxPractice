@@ -1,10 +1,11 @@
 <div class="todo">
-  <form [formGroup]="todoForm" (ngSubmit)="addTodo()">
+  <form #todoForm="ngForm" (ngSubmit)="addTodo(todoForm)">
     <input
-      formControlName="name"
       type="text"
       placeholder="Create a new todo.."
       id="name"
+      name="name"
+      [(ngModel)]="todoInput"
     />
     <button class="pos-abs" type="submit" [disabled]="todoForm.invalid">
       <img src="../../assets/images/icon-check.svg" alt="" />

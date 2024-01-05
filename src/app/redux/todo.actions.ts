@@ -61,14 +61,15 @@ export const todoDeletedFailure = createAction(
   props<{ error: any }>()
 );
 
-export const UPDATE_TODO = createAction(
-  '[Todo] Update Todo',
-  props<{ id: number }>()
-);
 export const markAsCompleted = createAction(
-  '[Todo/API] mark as completed Success',
-  props<{ id: number }>()
+  '[Todo] mark as completed Todo',
+  props<{ id: number; todo: Todo }>()
 );
+export const markAsCompletedSuccess = createAction(
+  '[Todo] mark as completed',
+  props<{ id: number; todo: Todo }>()
+);
+
 export const markAsCompletedFailure = createAction(
   '[Todo/API] mark as completed Failure',
   props<{ error: any }>()
@@ -76,24 +77,20 @@ export const markAsCompletedFailure = createAction(
 
 export const EDIT_TODO = createAction(
   '[Todo] Edit Todo',
-  props<{ id: number; todo: string }>()
+  props<{ id: number; todo: Todo }>()
 );
 export const todoToBeEdit = createAction(
   '[Todo/API] todo to be Edited',
-  props<{ id: number; todo: string }>()
+  props<{ id: number; todo: Todo }>()
 );
 export const todoEditFailure = createAction(
   '[Todo/API] todo Edited Failure',
   props<{ error: any }>()
 );
 
-export const CLEAR_COMPLETED_TODO = createAction(
-  '[Todo] Clear Completed Todo',
-  props<{ id: number }>()
-);
+export const CLEAR_COMPLETED_TODO = createAction('[Todo] Clear Completed Todo');
 export const CLEAR_COMPLETED_TODO_SUCCESS = createAction(
-  '[Todo/API] Clear Completed Todo Successful',
-  props<{ id: number }>()
+  '[Todo/API] Clear Completed Todo Successful'
 );
 export const CLEAR_COMPLETED_TODO_FAILURE = createAction(
   '[Todo/API] Clear Completed Todo Failure',
@@ -119,10 +116,13 @@ export const loadTodosSuccess = createAction(
   props<{ todos: Todo[] }>()
 );
 export const loadTodos = createAction('[Todo] load todo ');
-export const FailLoadTodos = createAction('[Todo]Fail load todo ');
-export const loadTodosFail = createAction(
-  '[Todo] Load Todos Fail',
-  props<{ errorMessage: string }>()
+export const FailLoadTodos = createAction(
+  '[Todo]Fail load todo ',
+  props<{ error: any }>()
 );
+// export const loadTodosFail = createAction(
+//   '[Todo] Load Todos Fail',
+//   props<{ errorMessage: string }>()
+// );
 
 export const removeErrorModal = createAction('[Error] Clear Error');

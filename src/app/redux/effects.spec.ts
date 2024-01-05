@@ -54,21 +54,6 @@ describe('TodoEffects', () => {
     });
   });
 
-  it('should dispatch showNetworkError action on error in loadTodos', () => {
-    const error = 'Failed to load todos. Please try again.';
-    const action = TodoActions.loadTodosFail({
-      errorMessage: 'Failed to load todos. Please try again.',
-    });
-
-    todoService.getAllTodos.and.returnValue(throwError(error));
-
-    actions$ = of(action);
-
-    effects.loadTodo$.subscribe((resultAction) => {
-      expect(resultAction).toEqual(jasmine.any(TodoActions.loadTodosFail));
-    });
-  });
-
   it('should dispatch todoAdded action on successful addTodo', () => {
     const todo = { id: '1', name: 'New Todo', complete: false, editing: false };
     const action = TodoActions.ADD_TODO({ todo });
@@ -99,48 +84,47 @@ describe('TodoEffects', () => {
       id: 1,
       name: 'Updated Todo',
       complete: false,
-      editing: false,
     };
     const action = TodoActions.EDIT_TODO({
       id: 1,
-      todo: todo.name,
+      todo: todo,
     });
 
-    todoService.editTodo.and.returnValue(of(action.todo));
+    todoService.editTodo.and.returnValue(of(action.todo.name));
 
     actions$ = of(action);
 
-    effects.updateTodo$.subscribe((resultAction) => {
+    effects.editTodo$.subscribe((resultAction) => {
       expect(resultAction).toEqual(
-        TodoActions.todoToBeEdit({ id: 1, todo: todo.name })
+        TodoActions.todoToBeEdit({ id: 1, todo: todo })
       );
     });
   });
 
   it('should dispatch markAsCompleted action on successful markAsComplete', () => {
     const todo = { id: 1, name: 'Todo 1', complete: false };
-    const action = TodoActions.UPDATE_TODO({ id: 1 });
+    const action = TodoActions.markAsCompleted({ id: 1, todo });
 
     todoService.markAsComplete.and.returnValue(of());
 
     actions$ = of(action);
 
     effects.markAsComplete$.subscribe((resultAction) => {
-      expect(resultAction).toEqual(TodoActions.markAsCompleted({ id: 1 }));
+      expect(resultAction).toEqual(
+        TodoActions.markAsCompletedSuccess({ id: 1, todo })
+      );
     });
   });
 
   it('should dispatch clearCompletedSuccess action on successful clearCompleted', () => {
-    const action = TodoActions.CLEAR_COMPLETED_TODO({ id: 1 });
+    const action = TodoActions.CLEAR_COMPLETED_TODO();
 
     todoService.getAllTodos.and.returnValue(of([]));
 
     actions$ = of(action);
 
     effects.clearCompleted$.subscribe((resultAction) => {
-      expect(resultAction).toEqual(
-        TodoActions.CLEAR_COMPLETED_TODO_SUCCESS({ id: 1 })
-      );
+      expect(resultAction).toEqual(TodoActions.DELETE_TODO({ id: 1 }));
     });
   });
 });

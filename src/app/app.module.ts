@@ -22,7 +22,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
   declarations: [AppComponent, TodoComponent, TodoListComponent],
   imports: [
     BrowserModule,
-    ReactiveFormsModule,
     FormsModule,
     StoreModule.forRoot({ todos: todoReducer }),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),

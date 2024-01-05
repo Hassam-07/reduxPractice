@@ -26,7 +26,7 @@ export class TodoService {
     return this.http.post<Todo>(this.apiUrl, todo);
   }
 
-  editTodo(id: number, todo: string): Observable<string> {
+  editTodo(id: number, todo: Todo): Observable<string> {
     return this.http.put<string>(`${this.apiUrl}/${id}`, todo);
   }
 
@@ -34,12 +34,13 @@ export class TodoService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  markAsComplete(todoId: number): Observable<void> {
-    return this.http.patch<void>(`${this.apiUrl}/${todoId}`, {
-      complete: true,
+  markAsComplete(todoId: number, status: boolean): Observable<Todo> {
+    console.log(todoId);
+    return this.http.patch<Todo>(`${this.apiUrl}/${todoId}`, {
+      complete: status,
     });
   }
   clearCompleted(): Observable<any> {
-    return this.http.delete<void>(`${this.apiUrl}?completed=true`);
+    return this.http.delete<void>(`${this.apiUrl}`);
   }
 }
