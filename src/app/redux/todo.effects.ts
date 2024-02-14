@@ -18,13 +18,13 @@ import {
 import { Action, Store, select } from '@ngrx/store';
 import { HttpClient } from '@angular/common/http';
 import * as TodoActions from './todo.actions';
-import { selectAll, TodosState } from './reducer';
-import { selectAllTodos } from './state';
+import { TodosState } from './reducer';
 import { EMPTY, of } from 'rxjs';
 import { Todo } from '../models/Todo';
 import { TodoService } from './todo.service';
 import { Observable } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { selectAllTodos } from './selectors';
 
 @Injectable()
 export class TodoEffects {
@@ -142,8 +142,8 @@ export class TodoEffects {
   clearCompleted$ = createEffect(() =>
     this.actions$.pipe(
       ofType(TodoActions.CLEAR_COMPLETED_TODO),
-      concatLatestFrom(() => [this.store.pipe(select(selectAllTodos))]),
-      mergeMap(([{}, todos]) =>
+      concatLatestFrom(() => this.store.pipe(select(selectAllTodos))),
+      mergeMap(([, todos]) =>
         todos
           .filter((todo) => todo.complete)
           .map((todo) => TodoActions.DELETE_TODO({ id: todo.id as number }))

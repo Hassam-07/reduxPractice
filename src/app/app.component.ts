@@ -13,14 +13,15 @@ import {
   enterTodosPage,
 } from './redux/todo.actions';
 import { Store } from '@ngrx/store';
-import { TodosState, selectAll } from './redux/reducer';
-import {
-  selectFilteredTodos,
-  incompleteTodosLength,
-  currentTodoTab,
-} from './redux/state';
+import { TodosState } from './redux/reducer';
+
 import { TodoActions } from './redux';
 import { TodoService } from './redux/todo.service';
+import {
+  selectFilteredTodos,
+  currentTodoTab,
+  incompleteTodosLength,
+} from './redux/selectors';
 
 @Component({
   selector: 'app-root',

@@ -109,18 +109,21 @@ import { createReducer, on, createSelector } from '@ngrx/store';
 import * as TodoActions from './todo.actions';
 import { Todo } from '../models/Todo';
 import { v4 as uuidv4 } from 'uuid';
+import { EntityAdapter, EntityState, createEntityAdapter } from '@ngrx/entity';
 
-export interface TodosState {
-  todos: Todo[];
+export const QUIZ_FEATURE_KEY = 'todo';
+export interface TodosState extends EntityState<Todo> {
+  // todos: Todo[];
   filter: 'all' | 'active' | 'completed';
   // errorMessage: string | null;
 }
+export const todosAdapter: EntityAdapter<Todo> = createEntityAdapter<Todo>();
 
-export const initialState: TodosState = {
-  todos: [],
+export const initialState: TodosState = todosAdapter.getInitialState({
+  // todos: [],
   filter: 'all',
   // errorMessage: null,
-};
+});
 
 export const todoReducer = createReducer(
   initialState,
@@ -130,58 +133,76 @@ export const todoReducer = createReducer(
       name: todo.name,
       complete: false,
     };
-    return { ...state, todos: [...state.todos, newTodo] };
+    return todosAdapter.addOne(newTodo, state);
   }),
 
   on(TodoActions.todoDeleted, (state, { id }) => {
-    const updatedTodos = state.todos.filter((todo) => todo.id !== id);
-    return { ...state, todos: updatedTodos };
+    return todosAdapter.removeOne(id, state);
   }),
 
   on(TodoActions.markAsCompletedSuccess, (state, { id }) => {
-    const updatedTodos = state.todos.map((todo) =>
-      todo.id === id ? { ...todo, complete: !todo.complete } : todo
+    return todosAdapter.updateOne(
+      { id: id, changes: { complete: !state.entities[id].complete,  } },
+      state
     );
-    return { ...state, todos: updatedTodos };
   }),
-  // on(TodoActions.markAsCompletedSuccess, (state, { id }) => ({
-  //   ...state,
-  //   todos: state.todos.map((todo) =>
-  //     todo.id === todo.id ? { ...todo, complete: !todo.complete } : todo
-  //   ),
-  // })),
 
-  // on(TodoActions.todoToBeEdit, (state, { id, todo }) => {
-  //   const editedTodos = state.todos.map((t) =>
-  //     t.id === id ? { ...t, name: todo } : t
-  //   );
-  //   return { ...state, todos: editedTodos };
-  // }),
   on(TodoActions.todoToBeEdit, (state, { id, todo }) => {
-    const updatedTodos = state.todos.map((todoUpdate) =>
-      todoUpdate.id === id ? { ...todoUpdate, name: todo.name } : todoUpdate
+    return todosAdapter.updateOne(
+      { id: id, changes: { name: todo.name } },
+      state
     );
-    return { ...state, todos: updatedTodos };
   }),
 
-  // on(TodoActions.CLEAR_COMPLETED_TODO_SUCCESS, (state) => {
-  //   const clearTodos = state.todos.filter((todo) => !todo.complete);
-  //   return { ...state, todos: clearTodos };
-  // }),
   on(TodoActions.SET_FILTER, (state, { filter }) => {
     return { ...state, filter };
   }),
+
   on(TodoActions.setTodo, (state, { todo }) => {
-    return { ...state, todos: [...state.todos, ...todo] };
+    return todosAdapter.setAll(todo, state);
   }),
+
   on(TodoActions.loadTodosSuccess, (state, { todos }) => {
-    return { ...state, todos: [...todos], errorMessage: '' };
+    return todosAdapter.setAll(todos, state);
   })
-  // on(TodoActions.loadTodosFail, (state, { ErrorText }) => ({
-  //   ...state,
-  //   ErrorText,
-  // }))
 );
 
-export const selectAll = (state: TodosState) => state.todos;
-export const selectActiveTodoId = (state: TodosState) => state.filter;
+// export const todoReducer = createReducer(
+//   initialState,
+//   on(TodoActions.todoAdded, (state, { todo }) => {
+//     const newTodo: Todo = {
+//       id: uuidv4(),
+//       name: todo.name,
+//       complete: false,
+//     };
+//     return { ...state, todos: [...state.todos, newTodo] };
+//   }),
+
+//   on(TodoActions.todoDeleted, (state, { id }) => {
+//     const updatedTodos = state.todos.filter((todo) => todo.id !== id);
+//     return { ...state, todos: updatedTodos };
+//   }),
+
+//   on(TodoActions.markAsCompletedSuccess, (state, { id }) => {
+//     const updatedTodos = state.todos.map((todo) =>
+//       todo.id === id ? { ...todo, complete: !todo.complete } : todo
+//     );
+//     return { ...state, todos: updatedTodos };
+//   }),
+//   on(TodoActions.todoToBeEdit, (state, { id, todo }) => {
+//     const updatedTodos = state.todos.map((todoUpdate) =>
+//       todoUpdate.id === id ? { ...todoUpdate, name: todo.name } : todoUpdate
+//     );
+//     return { ...state, todos: updatedTodos };
+//   }),
+
+//   on(TodoActions.SET_FILTER, (state, { filter }) => {
+//     return { ...state, filter };
+//   }),
+//   on(TodoActions.setTodo, (state, { todo }) => {
+//     return { ...state, todos: [...state.todos, ...todo] };
+//   }),
+//   on(TodoActions.loadTodosSuccess, (state, { todos }) => {
+//     return { ...state, todos: [...todos], errorMessage: '' };
+//   })
+// );
