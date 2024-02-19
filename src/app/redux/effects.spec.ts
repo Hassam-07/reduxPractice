@@ -7,6 +7,7 @@ import { StoreModule } from '@ngrx/store';
 import { TodoActions } from '.';
 import { TodoEffects } from './todo.effects';
 import { TodoService } from './todo.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 describe('TodoEffects', () => {
   let effects: TodoEffects;
@@ -18,6 +19,7 @@ describe('TodoEffects', () => {
       imports: [StoreModule.forRoot({})],
       providers: [
         TodoEffects,
+        MatSnackBar,
         provideMockActions(() => actions$),
         {
           provide: TodoService,
@@ -38,9 +40,7 @@ describe('TodoEffects', () => {
   });
 
   it('should dispatch loadTodoSuccess action on successful loadTodos', () => {
-    const todos = [
-      { id: '1', name: 'Todo 1', complete: false, editing: false },
-    ];
+    const todos = [{ id: '1', name: 'Todo 1', complete: false }];
     const action = TodoActions.loadTodosSuccess({ todos });
 
     todoService.getAllTodos.and.returnValue(of(todos));
@@ -55,7 +55,7 @@ describe('TodoEffects', () => {
   });
 
   it('should dispatch todoAdded action on successful addTodo', () => {
-    const todo = { id: '1', name: 'New Todo', complete: false, editing: false };
+    const todo = { id: '1', name: 'New Todo', complete: false };
     const action = TodoActions.ADD_TODO({ todo });
 
     todoService.addTodo.and.returnValue(of(todo));
@@ -68,14 +68,14 @@ describe('TodoEffects', () => {
   });
 
   it('should dispatch todoDeleted action on successful deleteTodo', () => {
-    const action = TodoActions.DELETE_TODO({ id: 1 });
+    const action = TodoActions.DELETE_TODO({ id: '1' });
 
     todoService.deleteTodo.and.returnValue(of(null));
 
     actions$ = of(action);
 
     effects.deleteTodo$.subscribe((resultAction) => {
-      expect(resultAction).toEqual(TodoActions.todoDeleted({ id: 1 }));
+      expect(resultAction).toEqual(TodoActions.todoDeleted({ id: '1' }));
     });
   });
 
@@ -86,7 +86,7 @@ describe('TodoEffects', () => {
       complete: false,
     };
     const action = TodoActions.EDIT_TODO({
-      id: 1,
+      id: '1',
       todo: todo,
     });
 
@@ -96,14 +96,14 @@ describe('TodoEffects', () => {
 
     effects.editTodo$.subscribe((resultAction) => {
       expect(resultAction).toEqual(
-        TodoActions.todoToBeEdit({ id: 1, todo: todo })
+        TodoActions.todoToBeEdit({ id: '1', todo: todo })
       );
     });
   });
 
   it('should dispatch markAsCompleted action on successful markAsComplete', () => {
     const todo = { id: 1, name: 'Todo 1', complete: false };
-    const action = TodoActions.markAsCompleted({ id: 1, todo });
+    const action = TodoActions.markAsCompleted({ id: '1', todo });
 
     todoService.markAsComplete.and.returnValue(of());
 
@@ -111,7 +111,7 @@ describe('TodoEffects', () => {
 
     effects.markAsComplete$.subscribe((resultAction) => {
       expect(resultAction).toEqual(
-        TodoActions.markAsCompletedSuccess({ id: 1, todo })
+        TodoActions.markAsCompletedSuccess({ id: '1', todo })
       );
     });
   });
@@ -124,7 +124,7 @@ describe('TodoEffects', () => {
     actions$ = of(action);
 
     effects.clearCompleted$.subscribe((resultAction) => {
-      expect(resultAction).toEqual(TodoActions.DELETE_TODO({ id: 1 }));
+      expect(resultAction).toEqual(TodoActions.DELETE_TODO({ id: '1' }));
     });
   });
 });

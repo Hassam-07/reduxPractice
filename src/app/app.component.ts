@@ -97,7 +97,7 @@ export class AppComponent implements OnInit {
     this.store.dispatch(TodoActions.removeErrorModal());
   }
 
-  deleteTodo(todoId: number): void {
+  deleteTodo(todoId: string): void {
     this.store.dispatch(DELETE_TODO({ id: todoId }));
     this.showDeleteModal = false;
   }

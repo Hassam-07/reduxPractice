@@ -146,7 +146,7 @@ export class TodoEffects {
       mergeMap(([, todos]) =>
         todos
           .filter((todo) => todo.complete)
-          .map((todo) => TodoActions.DELETE_TODO({ id: todo.id as number }))
+          .map((todo) => TodoActions.DELETE_TODO({ id: todo.id }))
       )
     )
   );

@@ -11,8 +11,6 @@ export const selectAllTodos = createSelector(
   (state: TodosState) => selectAll(state)
 );
 
-// export const selectActiveTodoId = (state: TodosState) => state.filter;
-
 export const incompleteTodosLength = createSelector(
   selectAllTodos,
   (todos) => todos.filter((todo) => !todo.complete).length

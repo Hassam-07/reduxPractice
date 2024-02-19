@@ -50,11 +50,11 @@ export const todoAddedFailure = createAction(
 
 export const DELETE_TODO = createAction(
   '[Todo] Delete Todo',
-  props<{ id: number }>()
+  props<{ id: string }>()
 );
 export const todoDeleted = createAction(
   '[Todo/API] todo deleted Success',
-  props<{ id: number }>()
+  props<{ id: string }>()
 );
 export const todoDeletedFailure = createAction(
   '[Todo/API] todo deleted Failure',
@@ -63,11 +63,11 @@ export const todoDeletedFailure = createAction(
 
 export const markAsCompleted = createAction(
   '[Todo] mark as completed Todo',
-  props<{ id: number; todo: Todo }>()
+  props<{ id: string; todo: Todo }>()
 );
 export const markAsCompletedSuccess = createAction(
   '[Todo] mark as completed',
-  props<{ id: number; todo: Todo }>()
+  props<{ id: string; todo: Todo }>()
 );
 
 export const markAsCompletedFailure = createAction(
@@ -77,11 +77,11 @@ export const markAsCompletedFailure = createAction(
 
 export const EDIT_TODO = createAction(
   '[Todo] Edit Todo',
-  props<{ id: number; todo: Todo }>()
+  props<{ id: string; todo: Todo }>()
 );
 export const todoToBeEdit = createAction(
   '[Todo/API] todo to be Edited',
-  props<{ id: number; todo: Todo }>()
+  props<{ id: string; todo: Todo }>()
 );
 export const todoEditFailure = createAction(
   '[Todo/API] todo Edited Failure',
