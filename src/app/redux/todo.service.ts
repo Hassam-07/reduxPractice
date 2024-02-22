@@ -30,8 +30,15 @@ export class TodoService {
     return this.http.put<string>(`${this.apiUrl}/${id}`, todo);
   }
 
-  deleteTodo(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  deleteTodo(id: string): Observable<string> {
+    return this.http.delete<string>(`${this.apiUrl}/${id}`);
+  }
+  undoDelete(id: string): Observable<Todo> {
+    return this.http.post<Todo>(`${this.apiUrl}/${id}`, {});
+  }
+  addTodoWithIndex(todo: Todo): Observable<Todo> {
+    // Adjust the implementation based on your backend
+    return this.http.post<Todo>(`${this.apiUrl}`, todo);
   }
 
   markAsComplete(todoId: string, status: boolean): Observable<Todo> {

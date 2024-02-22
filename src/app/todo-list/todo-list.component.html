@@ -11,7 +11,7 @@
       /></span>
       <div>
         <p class="todos" [class.completed]="todo.complete">
-          {{ todo.name }}
+          {{ todo.name }} - {{ todo.index }}
         </p>
       </div>
       <button (click)="editTodo(todo)" class="edit">

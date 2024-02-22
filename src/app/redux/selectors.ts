@@ -19,13 +19,17 @@ export const currentTodoTab = createSelector(
   selectSharedTodosState,
   (state) => state.filter
 );
+export const selectTodosSortedByIndex = createSelector(
+  selectAllTodos,
+  (todos) => [...todos].sort((a, b) => a.index - b.index)
+);
 
 export const selectFilteredTodos = createSelector(
-  selectAllTodos,
+  selectTodosSortedByIndex,
   selectSharedTodosState,
   (todos, state) => {
-    const filter = state.filter;
-    switch (filter) {
+    const filterTodos = state.filter;
+    switch (filterTodos) {
       case 'active':
         return todos.filter((todo) => !todo.complete);
       case 'completed':
@@ -34,4 +38,8 @@ export const selectFilteredTodos = createSelector(
         return todos;
     }
   }
+);
+export const selectDeletedTodo = createSelector(
+  selectSharedTodosState,
+  (state) => state.deletedTodo
 );

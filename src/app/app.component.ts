@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { v4 as uuidv4 } from 'uuid';
 
-import { Observable, catchError, of, startWith } from 'rxjs';
+import { Observable, catchError, filter, map, of, startWith, take } from 'rxjs';
 import { Todo } from './models/Todo';
 import {
   ADD_TODO,
@@ -12,7 +12,7 @@ import {
   CLEAR_COMPLETED_TODO,
   enterTodosPage,
 } from './redux/todo.actions';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import { TodosState } from './redux/reducer';
 
 import { TodoActions } from './redux';
@@ -21,6 +21,8 @@ import {
   selectFilteredTodos,
   currentTodoTab,
   incompleteTodosLength,
+  selectDeletedTodo,
+  selectTodosSortedByIndex,
 } from './redux/selectors';
 
 @Component({
@@ -40,14 +42,13 @@ export class AppComponent implements OnInit {
   todoInfo$!: Observable<any>;
   constructor(private store: Store, private todoServices: TodoService) {}
   errorMessage: string | null;
+  // todos$: Observable<Todo[]>;
   ngOnInit(): void {
     this.getTodos();
-    // this.store.dispatch(TodoActions.loadTodos());
     this.allTodos$ = this.store.select(selectFilteredTodos);
-    // this.todoInfo$ = this.store.select(allTodosInfo);
     this.activeTab$ = this.store.select(currentTodoTab);
+    // this.todos$ = this.store.select(selectTodosSortedByIndex);
     this.incompleteTodosLength$ = this.store.select(incompleteTodosLength);
-    // this.errorMessage$ = this.store.pipe(select('error', 'errorMessage'));
     this.store.dispatch(enterTodosPage());
   }
   getTodos() {
@@ -58,13 +59,13 @@ export class AppComponent implements OnInit {
     this.selectedTodo = todo;
     this.todoInput = todo.name;
   }
-  addTodo(newTodo: string) {
+  addTodo(newTodo: Todo) {
     if (newTodo) {
       if (this.selectedTodo) {
         // Editing existing todo
         let updatedTask: Todo = {
           ...this.selectedTodo,
-          name: newTodo,
+          name: newTodo.name,
         };
 
         this.store.dispatch(
@@ -80,11 +81,7 @@ export class AppComponent implements OnInit {
       } else {
         this.store.dispatch(
           ADD_TODO({
-            todo: {
-              id: uuidv4(),
-              name: newTodo,
-              complete: false,
-            },
+            todo: newTodo,
           })
         );
       }
@@ -97,8 +94,10 @@ export class AppComponent implements OnInit {
     this.store.dispatch(TodoActions.removeErrorModal());
   }
 
-  deleteTodo(todoId: string): void {
-    this.store.dispatch(DELETE_TODO({ id: todoId }));
+  deleteTodo(todo: Todo): void {
+    // Update Todo to match your Todo model
+    console.log('app console', todo.id);
+    this.store.dispatch(DELETE_TODO({ id: todo.id }));
     this.showDeleteModal = false;
   }
   markCompleted(todo: Todo): void {

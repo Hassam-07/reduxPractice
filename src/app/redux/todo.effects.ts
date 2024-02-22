@@ -14,6 +14,8 @@ import {
   concatMap,
   mergeMap,
   catchError,
+  filter,
+  take,
 } from 'rxjs/operators';
 import { Action, Store, select } from '@ngrx/store';
 import { HttpClient } from '@angular/common/http';
@@ -24,7 +26,7 @@ import { Todo } from '../models/Todo';
 import { TodoService } from './todo.service';
 import { Observable } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { selectAllTodos } from './selectors';
+import { selectAllTodos, selectDeletedTodo } from './selectors';
 
 @Injectable()
 export class TodoEffects {
@@ -43,6 +45,9 @@ export class TodoEffects {
       ofType(TodoActions.loadTodos),
       mergeMap(() =>
         this.todoServices.getAllTodos().pipe(
+          tap((todos: Todo[]) => {
+            console.log('Todos:', todos);
+          }),
           map((todos: Todo[]) => TodoActions.loadTodosSuccess({ todos })),
           catchError((error) => {
             console.error('Error in loadTodos effect:', error);
@@ -85,6 +90,15 @@ export class TodoEffects {
       mergeMap((action) =>
         this.todoServices.deleteTodo(action.id).pipe(
           map(() => TodoActions.todoDeleted({ id: action.id })),
+          tap(() => {
+            const snackBarRef = this.snackbar.open('Todo Deleted', 'Undo', {
+              duration: 10000,
+            });
+            snackBarRef.onAction().subscribe(() => {
+              // Dispatch action to undo delete operation
+              this.store.dispatch(TodoActions.undoDeletedTodo());
+            });
+          }),
           catchError((error) =>
             of(
               TodoActions.todoDeletedFailure({
@@ -96,6 +110,65 @@ export class TodoEffects {
       )
     )
   );
+
+  undoDelete$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TodoActions.undoDeletedTodo),
+      concatLatestFrom(() => this.store.pipe(select(selectDeletedTodo))),
+      filter(([action, deletedTodo]) => !!deletedTodo),
+      mergeMap(([action, deletedTodo]) =>
+        this.todoServices.addTodo(deletedTodo).pipe(
+          map((restoredTodo: Todo) =>
+            TodoActions.todoAdded({ todo: restoredTodo })
+          ),
+          catchError((error) =>
+            of(
+              TodoActions.UndoTodoFailure({
+                error,
+              })
+            )
+          )
+        )
+      )
+    )
+  );
+
+  // undoDelete$ = createEffect(() =>
+  //   this.actions$.pipe(
+  //     ofType(TodoActions.undoDeletedTodo),
+  //     mergeMap(() =>
+  //       this.store.pipe(select(selectDeletedTodo)).pipe(
+  //         map((deletedTodo) => {
+  //           if (deletedTodo) {
+  //             return TodoActions.addRestoredTodo({ todo: deletedTodo });
+  //           } else {
+  //             return TodoActions.undoDeleteFailure({
+  //               error: 'No deleted todo to undo',
+  //             });
+  //           }
+  //         }),
+  //         catchError((error) => of(TodoActions.undoDeleteFailure({ error })))
+  //       )
+  //     )
+  //   )
+  // );
+
+  // addRestoredTodo$ = createEffect(() =>
+  //   this.actions$.pipe(
+  //     ofType(TodoActions.addRestoredTodo),
+  //     mergeMap(({ todo }) =>
+  //       this.todoServices.addTodoWithIndex(todo).pipe(
+  //         map((restoredTodo: Todo) =>
+  //           TodoActions.restoredTodoAddedSuccess({ todo: restoredTodo })
+  //         ),
+  //         catchError((error) =>
+  //           of(TodoActions.restoredTodoAddedFailure({ error }))
+  //         )
+  //       )
+  //     )
+  //   )
+  // );
+
   editTodo$: Observable<Action> = createEffect(() =>
     this.actions$.pipe(
       ofType(TodoActions.EDIT_TODO),
@@ -159,7 +232,9 @@ export class TodoEffects {
           TodoActions.todoAddedFailure,
           TodoActions.todoDeletedFailure,
           TodoActions.todoEditFailure,
-          TodoActions.markAsCompletedFailure
+          TodoActions.markAsCompletedFailure,
+          TodoActions.undoDeleteFailure,
+          TodoActions.UndoTodoFailure
         ),
         tap(() =>
           this.snackbar.open(

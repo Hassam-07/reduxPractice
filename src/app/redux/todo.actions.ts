@@ -1,39 +1,7 @@
-// export interface Action {
-//   type: string;
-//   payload?: { [key: string]: any };
-// }
-
-// export interface Action {
-//   type: string;
-//   payload?: { [key: string]: any };
-// }
-
-// export const ADD_TODO = (todo: string): Action => ({
-//   type: 'ADD_TODO',
-//   payload: { todo },
-// });
-
-// export const DELETE_TODO = (id: string): Action => ({
-//   type: 'DELETE_TODO',
-//   payload: { id },
-// });
-
-// export const UPDATE_TODO = (id: string): Action => ({
-//   type: 'UPDATE_TODO',
-//   payload: { id },
-// });
-// export const EDIT_TODO = (id: string, todo: string): Action => ({
-//   type: 'EDIT_TODO',
-//   payload: { id, todo },
-// });
-// export const CLEAR_COMPLETED_TODO = (Todo: string): Action => ({
-//   type: 'CLEAR_COMPLETED_TODO',
-//   payload: { Todo },
-// });
-
 import { createAction, props } from '@ngrx/store';
 import { Todo } from '../models/Todo';
 import { TodosState } from './reducer';
+import { MatSnackBarRef } from '@angular/material/snack-bar';
 
 export const ADD_TODO = createAction(
   '[Todo] Add Todo',
@@ -57,6 +25,18 @@ export const todoDeleted = createAction(
   props<{ id: string }>()
 );
 export const todoDeletedFailure = createAction(
+  '[Todo/API] todo deleted Failure',
+  props<{ error: any }>()
+);
+export const UNDO_DELETE = createAction(
+  '[Todo]Undo Delete Todo',
+  props<{ todo: Todo }>()
+);
+export const UndoDeletedSuccess = createAction(
+  '[Todo/API]Undo deleted todo Success',
+  props<{ todo: Todo }>()
+);
+export const undoDeleteFailure = createAction(
   '[Todo/API] todo deleted Failure',
   props<{ error: any }>()
 );
@@ -107,9 +87,6 @@ export const setTodo = createAction(
   '[Todo] setTodo',
   props<{ todo: Todo[] }>()
 );
-// export function LOCAL_STORAGE_UPDATE(arg0: { todos: Todo[] }) {
-//   throw new Error('Function not implemented.');
-// }
 
 export const loadTodosSuccess = createAction(
   '[Todo] Load Todos Success',
@@ -120,9 +97,30 @@ export const FailLoadTodos = createAction(
   '[Todo]Fail load todo ',
   props<{ error: any }>()
 );
-// export const loadTodosFail = createAction(
-//   '[Todo] Load Todos Fail',
-//   props<{ errorMessage: string }>()
-// );
+export const UndoTodoFailure = createAction(
+  '[Todo]Fail Undo todo ',
+  props<{ error: any }>()
+);
 
 export const removeErrorModal = createAction('[Error] Clear Error');
+
+export const undoDeletedTodo = createAction('[Todo Page] Undo Deleted Todo');
+export const restoreDeletedTodo = createAction(
+  '[Todo] Restore Deleted Todo',
+  props<{ todo: Todo }>()
+);
+
+export const addRestoredTodo = createAction(
+  '[Todo] Add Restored Todo',
+  props<{ todo: Todo }>()
+);
+
+export const restoredTodoAddedSuccess = createAction(
+  '[Todo] Restored Todo Added Success',
+  props<{ todo: Todo }>()
+);
+
+export const restoredTodoAddedFailure = createAction(
+  '[Todo] Restored Todo Added Failure',
+  props<{ error: any }>()
+);

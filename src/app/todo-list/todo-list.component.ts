@@ -18,7 +18,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   templateUrl: './todo-list.component.html',
   styleUrls: ['./todo-list.component.scss'],
 })
-export class TodoListComponent implements OnInit, OnChanges {
+export class TodoListComponent implements OnInit {
   @Input() todos!: Todo[] | null;
   @Input() incompleteTodos!: number | null;
   @Input() showDeleteModal!: boolean;
@@ -43,34 +43,46 @@ export class TodoListComponent implements OnInit, OnChanges {
     this.showLoader = true;
   }
 
-  ngOnChanges() {
-    // if ((this.todos && this.todos.length > 0) || this.todos?.length === 0) {
-    //   this.showLoader = false;
-    // }
-  }
-
   openDeleteQuestionConfirmationDialog(todoId: number) {
     this.todoIdToBeDeleted = todoId;
     this.showDeleteModal = true;
     console.log(todoId);
   }
 
-  // startEditing(todo: Todo) {
-  //   todo.editing = true;
-  // }
-
   closeDeleteQuestionConfirmationDialog() {
     this.todoIdToBeDeleted = undefined;
     this.showDeleteModal = false;
   }
+  // deleteTodo() {
+  //   this.deleteTodoItem.emit(this.todoIdToBeDeleted);
+  //   this.todoIdToBeDeleted = undefined;
+  //   this.showDeleteModal = false;
+  // }
+  // deleteTodo() {
+  //   const deletedTodo = this.todos.find(
+  //     (todo) => todo.id === this.todoIdToBeDeleted
+  //   );
+  //   if (deletedTodo) {
+  //     this.deleteTodoItem.emit(deletedTodo);
+  //     this.todoIdToBeDeleted = undefined;
+  //     this.showDeleteModal = false;
+  //   }
+  // }
   deleteTodo() {
-    this.deleteTodoItem.emit(this.todoIdToBeDeleted);
-    this.todoIdToBeDeleted = undefined;
-    this.showDeleteModal = false;
+    const deletedTodo = this.todos.find(
+      (todo) => todo.id === this.todoIdToBeDeleted
+    );
+    if (deletedTodo) {
+      // this.todoIdToBeDeleted = deletedTodo.id;
+      console.log(deletedTodo.id);
+      this.deleteTodoItem.emit({ id: deletedTodo.id }); // Pass the whole todo object as payload
+      this.todoIdToBeDeleted = undefined;
+      this.showDeleteModal = false;
+    }
   }
+
   close(): void {
     this.closeBtn.emit();
-    // this.store.dispatch(ErrorActions.removeErrorModal());
   }
   togglePin(todo: Todo) {
     this.pinTodoItem.emit(todo);
